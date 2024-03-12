@@ -1,11 +1,11 @@
-library(shiny)
-library(ggplot2)
-library(jsonlite)
-library(dplyr)
-library(plotly)
-library(leaflet)
+#library(shiny)
+#library(ggplot2)
+#library(jsonlite)
+#library(dplyr)
+#library(plotly)
+#library(leaflet)
 
-function(input, output) {
+function(input, output, session) {
   
   # Data upload and preprocess
   processed_data <- reactive({
