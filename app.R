@@ -1,9 +1,9 @@
 # app.R
 library(shiny)
 
-source("2global.R")
-source("2ui.R")
-source("2server.R")
+source("global.R")
+source("ui.R")
+source("server.R")
 
 
 shinyApp(ui = ui, server = server)
