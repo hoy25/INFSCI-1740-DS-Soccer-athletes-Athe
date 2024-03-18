@@ -1,7 +1,9 @@
+# app.R
 library(shiny)
 
-# Assuming ui.R and server.R are in the same directory as app.R
-source("ui.R")
-source("server.R")
+source("2global.R")
+source("2ui.R")
+source("2server.R")
 
+# 运行应用程序
 shinyApp(ui = ui, server = server)
