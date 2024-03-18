@@ -1,16 +1,22 @@
-#library(shiny)
-#library(ggplot2)
-#library(jsonlite)
-#library(dplyr)
-#library(plotly)
-#library(leaflet)
+library(shiny)
 
-function(input, output, session) {
+options(shiny.maxRequestSize = 10*1024^2)
+
+server <- function(input, output, session) {
   
-  # Data upload and preprocess
+  # Data upload and preprocessing
   processed_data <- reactive({
     req(input$dataFile)
     data <- read_json(input$dataFile$datapath, simplifyVector = TRUE)
+  
+    if (!is.null(input$teamFilter) && input$teamFilter != "") {
+      data <- data[data$team == input$teamFilter, ]
+    }
+    
+    if (!is.null(input$dateFilter)) {
+      data <- data[data$date >= input$dateFilter[1] & data$date <= input$dateFilter[2], ]
+    }
+    
     return(data)
   })
   
@@ -72,4 +78,30 @@ function(input, output, session) {
       labs(title = "Correlation Heatmap")
   })
   
+  ### New Visualization: Scoring Probability Heatmap
+  output$scoringProbabilityHeatmap <- renderPlot({
+    data <- processed_data()
+    shot_data <- data %>%
+      filter(type.primary == "shot") %>%
+      mutate(goal = if_else(shot.outcome == "Goal", 1, 0))
+    x_bins <- cut(shot_data$location.x, breaks=seq(0, 100, by=10)) # adjust bin sizes if necessary
+    y_bins <- cut(shot_data$location.y, breaks=seq(0, 100, by=10)) # adjust bin sizes if necessary
+    
+    shot_data_binned <- shot_data %>%
+      mutate(x_bin = x_bins, y_bin = y_bins) %>%
+      group_by(x_bin, y_bin) %>%
+      summarise(scoring_prob = mean(goal, na.rm = TRUE), .groups = 'drop')
+    
+    shot_data_binned <- shot_data_binned %>%
+      mutate(x_numeric = as.numeric(as.character(shot_data_binned$x_bin)),
+             y_numeric = as.numeric(as.character(shot_data_binned$y_bin)))
+
+    ggplot(shot_data_binned, aes(x = x_numeric, y = y_numeric, fill = scoring_prob)) +
+      geom_tile() +
+      scale_fill_gradient(low = "blue", high = "red") +
+      labs(title = "Scoring Probability Heatmap", x = "Field Width", y = "Field Length", fill = "Probability") +
+      theme_minimal() + coord_fixed(ratio = 1)
+  })
+  
 }
+
