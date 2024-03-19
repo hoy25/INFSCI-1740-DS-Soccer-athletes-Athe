@@ -35,23 +35,23 @@ function(input, output, session) {
   matchIds <- reactive({
     sapply(my_json(),
            function(one_game) one_game %>% select(matchId) %>% pluck(1, 1)
-    )
+           )
   })
   
   # get team names from all games
   team_names <- reactive({
     sapply(my_json(), 
            function(one_game) one_game %>% select(team.name) %>% unique
-    )
+           )
   })
-
+  
   # reactive for the currently chosen game index
   # this is chosen in the variable details tab, or is 1 by default
   selected_game_index <- reactive({
     ifelse(str_equal(input$one_game_selector, ''),
            1,
            match(input$one_game_selector, matchIds()) # this is the R match function. Confusing naming...
-    )
+           )
     
   })
   
@@ -74,7 +74,7 @@ function(input, output, session) {
     )
     
   })
-  
+
   # reactive for the currently chosing multiple games in the BAR CHARTS panel
   # this is chosen in Bar Charts -> Counts - Multiple Games, or is 1 by default
   selected_games_index_bar_charts <- reactive({
@@ -96,7 +96,7 @@ function(input, output, session) {
   selected_game_dict_bar_charts <- reactive({
     get_game_dict(selected_game_index_bar_charts(), my_json())
   })
-  
+
   # reactive for currently chosen games in the BAR CHARTS panel
   selected_games_bar_charts <- reactive({
     my_json() %>% bind_rows() %>%
@@ -112,7 +112,7 @@ function(input, output, session) {
     )
     
   })
-  
+
   # reactive for the currently chosen games index in the HISTOGRAMS multiple games panel
   selected_games_histogram_charts <- reactive({
     my_json() %>% bind_rows() %>%
@@ -185,7 +185,7 @@ function(input, output, session) {
     if (is.null(my_json())) {
       return ('No file has been uploaded')
     } else {
-      
+
       # remove duplicates
       unique_teams <- team_names() %>% unlist %>% unique
       return(length(unique_teams))
@@ -305,7 +305,7 @@ function(input, output, session) {
     } else {
       var_group <- input$variable_group_selector
       variables_in_group <- (selected_game_dict()$flattened_variable_name)[selected_game_dict()$variable_group == var_group]
-      
+
       data_in_var_group <- selected_game() %>% select(all_of(variables_in_group))
       
       num_unique_per_var <- sapply(data_in_var_group, function(col) length(unique(col)))
@@ -351,7 +351,7 @@ function(input, output, session) {
     } else {
       one_var <- input$unique_values_1_var_in_group
       num_unique <- sapply(my_json(), function(game) game %>% select(all_of(one_var)) %>% n_distinct)
-      
+
       if (input$variable_details_show_proportions) {
         total_entries <- sapply(my_json(), function(game) nrow(game))
         num_unique <- num_unique / total_entries
@@ -392,8 +392,8 @@ function(input, output, session) {
       }
       
       num_missing_per_var <- data.frame(variable = names(num_missing_per_var), 
-                                        num_missing=num_missing_per_var, 
-                                        data_type=selected_game_dict()$data_type[selected_game_dict()$variable_group == var_group])
+                                       num_missing=num_missing_per_var, 
+                                       data_type=selected_game_dict()$data_type[selected_game_dict()$variable_group == var_group])
       
       g <- num_missing_per_var %>% ggplot() +
         geom_col(aes(x = variable, y = num_missing))
@@ -450,8 +450,8 @@ function(input, output, session) {
     }
     
   })
-  
-  ### --- Data dictionary --- 
+
+ ### --- Data dictionary --- 
   
   output$data_dict<- renderTable({
     if (is.null(my_json())) {
@@ -460,7 +460,7 @@ function(input, output, session) {
       list <- selected_game()
       
       dict <-selected_game_dict() %>%
-        filter(data_type == input$data_type_selector) %>%
+       filter(data_type == input$data_type_selector) %>%
         select(-data_type,-variable_name)
       
       dict <- dict %>%
@@ -499,7 +499,7 @@ function(input, output, session) {
         dict <- dict %>% 
           mutate(count = sapply(flattened_variable_name, function(col_name) {sum(list[[col_name]], na.rm = TRUE)}),
                  proportion = sapply(flattened_variable_name, function(col_name) {mean(list[[col_name]], na.rm = TRUE)})
-          )
+                 )
       }
       else if(input$data_type_selector == "list")
       {
@@ -535,7 +535,7 @@ function(input, output, session) {
       data_in_var_group <- selected_game_bar_charts() %>% select(all_of(variables_in_group))
       num_unique_per_var <- sapply(data_in_var_group, function(col) length(unique(col)))
       max_unique <- as.numeric(input$bar_charts_max_unique)
-      
+
       variables_in_group_max_n_unique <- variables_in_group[num_unique_per_var <= max_unique | !(variable_data_types %in% c('integer', 'numeric'))]
       # TODO: what to do about viewing list data types
       
@@ -570,11 +570,11 @@ function(input, output, session) {
       }
       
       g <- g + labs(x = one_var)
-      
+        
       if (input$bar_charts_orientation == "Horizontal") {
         g <- g + coord_flip()
       }
-      return(g)
+       return(g)
     }
   })
   
@@ -588,9 +588,9 @@ function(input, output, session) {
       
       
       updateSelectizeInput(session, 'bar_charts_multiple_game_selector',
-                           choices = matchIds(),
-                           options = list(selected = selected_choices)
-      )
+                        choices = matchIds(),
+                        options = list(selected = ifelse(length(matchIds()) >=3, matchIds()[1:3], NULL))
+                        )
     }
   }) %>% bindEvent(input$user_file)
   
@@ -625,50 +625,50 @@ function(input, output, session) {
       
       
       
-      if (input$bar_charts_selector == "stacked")
-      {
-        if (input$bar_charts_show_proportions)
-        {
-          g <- g + geom_bar(aes(x = factor(.data[[one_var]]), fill = as.factor(matchId)), position = "fill")
-        }
-        else
-        {
-          g <- g + geom_bar(aes(x = factor(.data[[one_var]]), fill = as.factor(matchId)), position = "stack")
-        }
+       if (input$bar_charts_selector == "stacked")
+       {
+         if (input$bar_charts_show_proportions)
+         {
+           g <- g + geom_bar(aes(x = factor(.data[[one_var]]), fill = as.factor(matchId)), position = "fill")
+         }
+         else
+         {
+           g <- g + geom_bar(aes(x = factor(.data[[one_var]]), fill = as.factor(matchId)), position = "stack")
+         }
         
-      }
-      else if (input$bar_charts_selector == "dodged")
-      {
-        if (input$bar_charts_show_proportions)
-        {
-          proportion_data <- selected_games_bar_charts()%>%
-            count(.data[[one_var]], matchId) %>%
-            group_by(.data[[one_var]]) %>%
-            mutate(prop = n / sum(n))
+       }
+       else if (input$bar_charts_selector == "dodged")
+       {
+         if (input$bar_charts_show_proportions)
+         {
+           proportion_data <- selected_games_bar_charts()%>%
+             count(.data[[one_var]], matchId) %>%
+             group_by(.data[[one_var]]) %>%
+             mutate(prop = n / sum(n))
           
-          g <- ggplot(proportion_data, aes(x = factor(.data[[one_var]]), y = prop, fill = as.factor(matchId))) +
-            geom_bar(stat = "identity", position = "dodge")
+           g <- ggplot(proportion_data, aes(x = factor(.data[[one_var]]), y = prop, fill = as.factor(matchId))) +
+             geom_bar(stat = "identity", position = "dodge")
           
-        }
-        else
-        {
-          g <- g + geom_bar(aes(x = factor(.data[[one_var]]), fill = as.factor(matchId)), position = "stack")
-        }
-        
-      }
-      else
-      {
-        if (input$bar_charts_show_proportions)
-        {
-          g <- g + geom_bar(aes(x = factor(.data[[one_var]]), fill = as.factor(matchId)), position = "fill") +
-            facet_wrap(~matchId)
-        }
-        else
-        {
-          g<- g + geom_bar(aes(x= factor(.data[[one_var]]))) +
-            facet_wrap(~matchId)
-        }
-      }
+         }
+         else
+         {
+           g <- g + geom_bar(aes(x = factor(.data[[one_var]]), fill = as.factor(matchId)), position = "stack")
+          }
+          
+       }
+       else
+       {
+         if (input$bar_charts_show_proportions)
+         {
+           g <- g + geom_bar(aes(x = factor(.data[[one_var]]), fill = as.factor(matchId)), position = "fill") +
+             facet_wrap(~matchId)
+         }
+         else
+         {
+         g<- g + geom_bar(aes(x= factor(.data[[one_var]]))) +
+              facet_wrap(~matchId)
+         }
+       }
       
       
       g <- g + labs(x = one_var)
@@ -722,7 +722,7 @@ function(input, output, session) {
       #   group_by( matchId) %>%
       #   summarise(Count = n_distinct(relatedEventId), .groups = "drop")
       #
-      # colnames(counts_data) <- c("matchId", "Count")
+     # colnames(counts_data) <- c("matchId", "Count")
       
       ## TODO tidy select programming with dplyr
       # category_data <- the_games %>%
@@ -805,7 +805,7 @@ function(input, output, session) {
       
       if (input$histograms_include_kde) {
         g <- g + geom_histogram(aes(x = .data[[one_var]],
-                                    y = after_stat(density)),
+                                y = after_stat(density)),
                                 bins = input$histograms_num_bins)
         g <- g + geom_density(aes(x = .data[[one_var]]))
       }
@@ -824,8 +824,8 @@ function(input, output, session) {
       return(g)
     }
   })
-  
-  ### --- Histograms - Multiple Games ---
+
+### --- Histograms - Multiple Games ---
   
   observe({
     if (!is.null(my_json())) {
@@ -835,7 +835,7 @@ function(input, output, session) {
       
       updateSelectizeInput(session, 'histograms_multiple_game_selector',
                            choices = matchIds(),
-                           options = list(selected = selected_choices)
+                           options = list(selected = ifelse(length(matchIds()) >=3, matchIds()[1:3], NULL))
       )
     }
   }) %>% bindEvent(input$user_file)
@@ -847,14 +847,14 @@ function(input, output, session) {
     } else {
       
       one_var <- input$histograms_1_var_in_group
-      
+    
       
       
       if(input$histogram_type_selector == "color")
       {
         
-        g<-selected_games_histogram_charts() %>%ggplot(., aes(x = .data[[one_var]], color = matchId)) +
-          geom_freqpoly()
+      g<-selected_games_histogram_charts() %>%ggplot(., aes(x = .data[[one_var]], color = matchId)) +
+        geom_freqpoly()
       }
       else
       {
@@ -877,7 +877,7 @@ function(input, output, session) {
       
       
       return(g)
-      
+    
     }
   })
   
@@ -945,7 +945,7 @@ function(input, output, session) {
       return(g)
     }
   })
-  
+ 
   ### --- ### LIST TYPES PANEL ### --- ###
   
   # update dropdowns to have match ID choices and list variable choices
@@ -966,7 +966,7 @@ function(input, output, session) {
       
     }
   }) %>% bindEvent(input$list_vars_one_game_selector)
-  
+
   val_to_row <- reactive({
     purrr::map_dfr(1:nrow(selected_game_list_vars()),
                    extract_list_values_per_row,
@@ -998,7 +998,7 @@ function(input, output, session) {
     return(g)
   })
   
-  
+    
   # output$list_vars_1_game <- renderPlot({
   #   if (is.null(my_json())) {
   #     return ('No file has been uploaded')
@@ -1027,7 +1027,7 @@ function(input, output, session) {
   # 
   output$list_vars_1_game_by_team_dynamic <- renderUI({
     renderPlot({
-      if (is.null(my_json())) {
+    if (is.null(my_json())) {
         return ('No file has been uploaded')
       } else {
         return(list_vars_1_game_plot() + facet_wrap(~team.name))
@@ -1035,48 +1035,36 @@ function(input, output, session) {
     }, height = input$list_vars_by_team_graph_height)
   })
   
-  ######  ######  ######  ######  ######  ######  ###### 
-  #get pass origin x, y
+  ###---------------------------------------------------------
   
-  start_x <- reactive({
-    map_dbl(my_json(), ~pluck(.x, "location", "x", .default = NA_real_))
-  })
-  
-  start_y <- reactive({
-    map_dbl(my_json(), ~pluck(.x, "location", "y", .default = NA_real_))
-  })
-  
-  end_x <- reactive({
-    map_dbl(my_json(), ~pluck(.x, "pass", "endLocation", "x", .default = NA_real_))
-  })
-  
-  end_y <- reactive({
-    map_dbl(my_json(), ~pluck(.x, "pass", "endLocation", "y", .default = NA_real_))
-  })
-
-  
-  output$pass_positions <- renderPlot({
-    req(selected_game()) # Ensure the selected game data is loaded
+  output$scoringProbability <- renderPlot({
+    data <- processed_data()
     
-    # Extract the start and end coordinates for plotting
-    data_for_plot <- tibble(
-      start_x = start_x(),
-      start_y = start_y(),
-      end_x = end_x(),
-      end_y = end_y()
-    )
+    # Removing NA outcomes to focus on clear 'Goal' or 'No Goal' situations
+    clean_data <- data %>% filter(!is.na(outcome))
     
-    print(head(data_for_plot))
-
-    ggplot(data_for_plot, aes(x = start_x, y = start_y)) +
-      geom_point(color = "blue", size = 3) +
-      geom_segment(aes(xend = end_x, yend = end_y), arrow = arrow(length = unit(0.02, "npc")), color = "green") +
-      scale_x_continuous(name = "Field Width") +
-      scale_y_continuous(name = "Field Length") +
-      ggtitle("Pass Start and End Positions")
+    # Binning the field into sections and calculating scoring probability per section
+    x_bins <- cut(clean_data$x, breaks=seq(0, 100, by=10))
+    y_bins <- cut(clean_data$y, breaks=seq(0, 100, by=10))
     
-  }
-  )
+    scoring_data <- clean_data %>%
+      mutate(x_bin = x_bins, y_bin = y_bins) %>%
+      group_by(x_bin, y_bin) %>%
+      summarise(scoring_prob = mean(outcome, na.rm = TRUE))
+    
+    # Converting factor bins to numeric for plotting
+    scoring_data$x_numeric <- as.numeric(as.character(scoring_data$x_bin))
+    scoring_data$y_numeric <- as.numeric(as.character(scoring_data$y_bin))
+    
+    # Plotting the scoring probability heatmap
+    ggplot(scoring_data, aes(x = x_numeric, y = y_numeric, fill = scoring_prob)) +
+      geom_tile() +
+      scale_fill_gradient(low = "blue", high = "red", name = "Scoring\nProbability") +
+      labs(title = "Scoring Probability by Field Position", x = "Field Width", y = "Field Length") +
+      theme_minimal() +
+      coord_fixed()
+  })
   
+  ###----------------------------------------------------------------
   
 }

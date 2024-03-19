@@ -54,34 +54,34 @@ navbarPage('Wyscout Event Level Data',
                       ),
                       mainPanel(
                         tabsetPanel(type = 'pills',
-                                    tabPanel('Unique values',
-                                             h4("Study the number of unique values for all variables within a single game"),
-                                             radioButtons('unique_values_facet_by_data_type',
-                                                          "Facet by data type:",
-                                                          c("Yes", "No"), inline = TRUE),
-                                             h5("Number of unique values for each variable in the variable group for 1 game:"),
-                                             plotOutput('unique_values_per_variable_chart'),
-                                             h4("Study the number of unique values for 1 variable across all games"),
-                                             selectInput('unique_values_1_var_in_group',
-                                                         "Select 1 variable in variable group:", ""), # choices updated in server
-                                             h5("Number of unique values for the selected variable across all games:"),
-                                             plotOutput('unique_values_for_1_variable_chart')
-                                    ),
-                                    tabPanel('Missing values',
-                                             h4("Study the number of missing values for all variables within a single game"),
-                                             radioButtons('missing_values_facet_by_data_type',
-                                                          "Facet by data type:",
-                                                          c("Yes", "No"), inline = TRUE),
-                                             h5("Number of missing values for each variable in the variable group for 1 game:"),
-                                             plotOutput('missing_values_per_variable_chart'),
-                                             h4("Study the number of missing values for 1 variable across all games"),
-                                             selectInput('missing_values_1_var_in_group',
-                                                         "Select 1 variable in variable group:", ""), # choices updated in server
-                                             h5("Number of missing values for the selected variable across all games:"),
-                                             plotOutput('missing_values_for_1_variable_chart')
-                                    ),
-                                    tabPanel('Data dictionary',
-                                             h5("Select data type:"),
+                          tabPanel('Unique values',
+                                   h4("Study the number of unique values for all variables within a single game"),
+                                   radioButtons('unique_values_facet_by_data_type',
+                                                "Facet by data type:",
+                                                c("Yes", "No"), inline = TRUE),
+                                   h5("Number of unique values for each variable in the variable group for 1 game:"),
+                                   plotOutput('unique_values_per_variable_chart'),
+                                   h4("Study the number of unique values for 1 variable across all games"),
+                                   selectInput('unique_values_1_var_in_group',
+                                               "Select 1 variable in variable group:", ""), # choices updated in server
+                                   h5("Number of unique values for the selected variable across all games:"),
+                                   plotOutput('unique_values_for_1_variable_chart')
+                                   ),
+                          tabPanel('Missing values',
+                                   h4("Study the number of missing values for all variables within a single game"),
+                                   radioButtons('missing_values_facet_by_data_type',
+                                                "Facet by data type:",
+                                                c("Yes", "No"), inline = TRUE),
+                                   h5("Number of missing values for each variable in the variable group for 1 game:"),
+                                   plotOutput('missing_values_per_variable_chart'),
+                                   h4("Study the number of missing values for 1 variable across all games"),
+                                   selectInput('missing_values_1_var_in_group',
+                                               "Select 1 variable in variable group:", ""), # choices updated in server
+                                   h5("Number of missing values for the selected variable across all games:"),
+                                   plotOutput('missing_values_for_1_variable_chart')
+                                   ),
+                          tabPanel('Data dictionary',
+                                  h5("Select data type:"),
                                              selectInput('data_type_selector',
                                                          "Select 1 data type:", 
                                                          choices = c("character","integer","numeric","list","logical")),
@@ -89,7 +89,7 @@ navbarPage('Wyscout Event Level Data',
                         )
                       )
                     )
-           ),
+                    ),
            tabPanel('Bar charts',
                     sidebarLayout(
                       sidebarPanel(
@@ -108,24 +108,24 @@ navbarPage('Wyscout Event Level Data',
                       ),
                       mainPanel(
                         tabsetPanel(type = 'pills',
-                                    tabPanel("Counts - 1 Game",
-                                             selectInput('bar_charts_one_game_selector',
-                                                         "Select 1 game by Match ID:", ""), # choices updated in server
-                                             plotOutput('bar_chart_counts_1_game')
-                                    ),
-                                    tabPanel("Counts - Multiple Games",
+                          tabPanel("Counts - 1 Game",
+                                   selectInput('bar_charts_one_game_selector',
+                                               "Select 1 game by Match ID:", ""), # choices updated in server
+                                   plotOutput('bar_chart_counts_1_game')
+                                   ),
+                          tabPanel("Counts - Multiple Games",
                                              selectizeInput('bar_charts_multiple_game_selector',
-                                                            "Select multiple game by Match ID:","", multiple =TRUE), # choices updated in server
+                                                         "Select multiple game by Match ID:","", multiple =TRUE), # choices updated in server
                                              selectInput('bar_charts_selector',
-                                                         "Show seperate games as:",""),
+                                                            "Show seperate games as:",""),
                                              plotOutput('bar_chart_counts_multiple_game')
-                                    ),
+                                             ),
                                     tabPanel("Category across games",
                                              selectInput('bar_charts_category_selector',
                                                          "Select category:", ""),
                                              plotOutput('bar_chart_categories')
-                                    )
-                                    
+                                             )
+                          
                         )
                       )
                     )),
@@ -139,31 +139,31 @@ navbarPage('Wyscout Event Level Data',
                       ),
                       mainPanel(
                         tabsetPanel(type = 'pills',
-                                    tabPanel("Histogram - 1 Game",
-                                             selectInput('histograms_one_game_selector',
-                                                         "Select 1 game by Match ID:", ""), # choices updated in server
-                                             sliderInput('histograms_num_bins', "Number of bins", 5, 100, 30, step = 1),
-                                             checkboxInput('histograms_include_kde', "Include KDE?"),
-                                             checkboxInput('histograms_include_rugs', "Include Rugs?"),
-                                             plotOutput('histogram_1_game')
-                                    ),
-                                    tabPanel("Histogram - Multiple Games",
+                          tabPanel("Histogram - 1 Game",
+                                   selectInput('histograms_one_game_selector',
+                                               "Select 1 game by Match ID:", ""), # choices updated in server
+                                   sliderInput('histograms_num_bins', "Number of bins", 5, 100, 30, step = 1),
+                                   checkboxInput('histograms_include_kde', "Include KDE?"),
+                                   checkboxInput('histograms_include_rugs', "Include Rugs?"),
+                                   plotOutput('histogram_1_game')
+                                   ),
+                          tabPanel("Histogram - Multiple Games",
                                              selectizeInput('histograms_multiple_game_selector',
                                                             "Select multiple game by Match ID:","", multiple =TRUE),
                                              selectInput('histogram_type_selector',
                                                          "Choose color or facets:",choices = c("color","facet"),),
                                              plotOutput('histogram_multiple_games'),
                                              checkboxInput('histograms_multiple_kde', "KDE")
-                                    ),
-                                    tabPanel("Boxplots",
-                                             plotOutput('histograms_boxplots'),
-                                             h5("The mean of the variable with 95% confidence interval across all games is:"),
-                                             plotOutput('histograms_boxplot_mean_ci')
-                                    ),
-                                    tabPanel("Violin Plots",
-                                             checkboxInput('histograms_violin_quantiles', "Include quantiles?"),
-                                             plotOutput('histograms_violinplots')
-                                    )
+                                             ),
+                          tabPanel("Boxplots",
+                                   plotOutput('histograms_boxplots'),
+                                   h5("The mean of the variable with 95% confidence interval across all games is:"),
+                                   plotOutput('histograms_boxplot_mean_ci')
+                                   ),
+                          tabPanel("Violin Plots",
+                                   checkboxInput('histograms_violin_quantiles', "Include quantiles?"),
+                                   plotOutput('histograms_violinplots')
+                                   )
                         )
                       )
                     )),
@@ -179,26 +179,16 @@ navbarPage('Wyscout Event Level Data',
                       ),
                       mainPanel(
                         tabsetPanel(type = 'pills',
-                                    tabPanel("Counts - 1 Game",
-                                             sliderInput('list_vars_graph_height', "Graph height", 200, 1000, 500, step = 100),
-                                             uiOutput('list_vars_1_game_dynamic')),
-                                    tabPanel("Facet by Team",
-                                             sliderInput('list_vars_by_team_graph_height', "Graph height", 200, 1000, 500, step = 100),
-                                             uiOutput('list_vars_1_game_by_team_dynamic'))
+                          tabPanel("Counts - 1 Game",
+                                   sliderInput('list_vars_graph_height', "Graph height", 200, 1000, 500, step = 100),
+                                   uiOutput('list_vars_1_game_dynamic')),
+                          tabPanel("Facet by Team",
+                                   sliderInput('list_vars_by_team_graph_height', "Graph height", 200, 1000, 500, step = 100),
+                                   uiOutput('list_vars_1_game_by_team_dynamic'))
                         )
                       )
-                    )),
-           tabPanel("Pass Positions", 
-                    fluidPage(
-                      plotOutput("pass_positions", height = "500px")
-                    )),
-           tabPanel("Pass Receivers", 
-                    fluidPage(
-                      plotOutput("pass_receivers", height = "500px")
-                    )),
-           tabPanel("Pass Success", 
-                    fluidPage(
-                      plotOutput("pass_success", height = "500px")
-                    ))
+                      
+                    ) ),
            
+           tabPanel("Scoring Probability Heatmap", plotOutput("scoringProbability"))
 )
