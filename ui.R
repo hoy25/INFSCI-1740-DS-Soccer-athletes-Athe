@@ -53,46 +53,50 @@ navbarPage('Wyscout Event Level Data',
                                           column(6,p("start"),plotOutput("hmap1")),
                                           column(6,p("end"),plotOutput("hmap2"))
                                         )
-                                    ),
-                                    tabPanel("Goal Information",
-                                        # attempts, onTarget, goals, xg, xg_diff
-                                        # sort, grp, sort_by
-                                        sidebarLayout(
-                                          sidebarPanel(
-                                            checkboxGroupInput("shotTableCols",
-                                                               "Information Categories",
-                                                               choices=c("Shot Attempts",
-                                                                         "Shots on Target",
-                                                                         "Actual Goals Scored",
-                                                                         "Xg",
-                                                                         "Xg Difference"),
-                                                               selected=c("Shot Attempts",
+                                    )
+                        )
+           ),
+           tabPanel("Shots",
+                    tabsetPanel(type = 'pills',
+                                tabPanel("Goal Information",
+                                         # attempts, onTarget, goals, xg, xg_diff
+                                         # sort, grp, sort_by
+                                         sidebarLayout(
+                                           sidebarPanel(
+                                             checkboxGroupInput("shotTableCols",
+                                                                "Information Categories",
+                                                                choices=c("Shot Attempts",
                                                                           "Shots on Target",
                                                                           "Actual Goals Scored",
                                                                           "Xg",
-                                                                          "Xg Difference")),
-                                            radioButtons("shotTableGroup",
-                                                         "Present Information by Player or by Team",
-                                                         choices=c("Player", "Team"))
-                                          ),
-                                          mainPanel(
-                                            dataTableOutput("shotTable")
-                                          )
-                                        )
-
-                                    ),
-                                    tabPanel("Shot Location Visualization",
-                                        sidebarLayout(
-                                          sidebarPanel(
-                                            
-                                          ),
-                                          mainPanel(
-                                            
-                                          )
-                                        )  
-                                    )
+                                                                          "Xg Difference"),
+                                                                selected=c("Shot Attempts",
+                                                                           "Shots on Target",
+                                                                           "Actual Goals Scored",
+                                                                           "Xg",
+                                                                           "Xg Difference")),
+                                             radioButtons("shotTableGroup",
+                                                          "Present Information by Player or by Team",
+                                                          choices=c("Player", "Team"))
+                                           ),
+                                           mainPanel(
+                                             dataTableOutput("shotTable")
+                                           )
+                                         )
+                                         
+                                ),
+                                tabPanel("Shot Location Visualization",
+                                         sidebarLayout(
+                                           sidebarPanel(
+                                             
+                                           ),
+                                           mainPanel(
+                                             
+                                           )
+                                         )  
+                                )
                         )
-)
+           )
 
 
 
