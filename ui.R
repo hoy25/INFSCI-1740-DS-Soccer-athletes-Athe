@@ -38,22 +38,67 @@ navbarPage('Wyscout Event Level Data',
            tabPanel("pass",
                         tabsetPanel(type = 'pills',
                                     tabPanel("pass plot 1",
-                                 fluidRow(
-                                   column(2,
-                                   actionButton("confirmButton", "Confirm"),  
-                                   selectInput('list_vars_one_id',
+                                      fluidRow(
+                                        column(2,
+                                          actionButton("confirmButton", "Confirm"),  
+                                              selectInput('list_vars_one_id',
                                                "Select ID want to see:", "",
                                                multiple = T)),# choices updated in server,
-                                   column(10,
-                                   plotOutput("passplot")))),
+                                        column(10,
+                                          plotOutput("passplot")))),
                                     tabPanel("hmap plot 2",
-                                    selectInput('list_match_period',
+                                        selectInput('list_match_period',
                                                 "Select match_period:", "",multiple = T), # choices updated in server
-                                    fluidRow(
-                                    column(6,p("start"),plotOutput("hmap1")),
-                                    column(6,p("end"),plotOutput("hmap2"))
+                                        fluidRow(
+                                          column(6,p("start"),plotOutput("hmap1")),
+                                          column(6,p("end"),plotOutput("hmap2"))
+                                        )
+                                    ),
+                                    tabPanel("Goal Information",
+                                        # attempts, onTarget, goals, xg, xg_diff
+                                        # sort, grp, sort_by
+                                        sidebarLayout(
+                                          sidebarPanel(
+                                            checkboxGroupInput("shotTableCols",
+                                                               "Information Categories",
+                                                               choices=c("Shot Attempts",
+                                                                         "Shots on Target",
+                                                                         "Actual Goals Scored",
+                                                                         "Xg",
+                                                                         "Xg Difference"),
+                                                               selected=c("Shot Attempts",
+                                                                          "Shots on Target",
+                                                                          "Actual Goals Scored",
+                                                                          "Xg",
+                                                                          "Xg Difference")),
+                                            radioButtons("shotTableGroup",
+                                                         "Present Information by Player or by Team",
+                                                         choices=c("Player", "Team"))
+                                          ),
+                                          mainPanel(
+                                            dataTableOutput("shotTable")
+                                          )
+                                        )
+
+                                    ),
+                                    tabPanel("Shot Location Visualization",
+                                        sidebarLayout(
+                                          sidebarPanel(
+                                            
+                                          ),
+                                          mainPanel(
+                                            
+                                          )
+                                        )  
                                     )
                         )
-                    )
 )
+
+
+
+
+
+
+
+
 )

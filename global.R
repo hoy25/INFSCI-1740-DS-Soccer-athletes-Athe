@@ -8,6 +8,9 @@ library(tidyverse)
 
 library(jsonlite)
 
+field_length_x = 120 # in yards
+field_width_y = 76
+
 
 
 ### modify the max allowed upload size -- 30 MB
@@ -61,3 +64,20 @@ extract_list_values_per_row <- function(rowid, list_column_name, single_game)
   
   res
 }
+
+convert_x <- function(x){
+  return((x/100)*field_length_x)
+}
+
+convert_y <- function(y){
+  return((y/100)*field_width_y)
+}
+
+
+
+
+
+
+
+
+

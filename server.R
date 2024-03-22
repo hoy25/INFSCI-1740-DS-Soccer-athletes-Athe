@@ -373,4 +373,194 @@ function(input, output, session) {
           low="white",high = "red")
     }
   })
+  
+  
+  ### Generate Shot Table
+  shot_df <- reactive({
+    games_list <- my_json()
+    games_df <- games_list[[1]] # init the dataframe with the first game
+    
+    if(number_of_games() > 1){
+      for(i in 2:number_of_games()){
+        games_df <- rbind(games_df, games_list[[i]])
+      }
+    }
+    # now games_df is a dataframe with all of the games that were in the json
+    df_shots <- games_df %>% select(matchPeriod, minute, second, location.x, 
+                                    location.y, shot.bodyPart, shot.isGoal, 
+                                    shot.onTarget, shot.goalZone,shot.xg, 
+                                    player.name, team.name) %>% na.omit()
+    
+    return(df_shots)
+  })
+  
+  generate_shot_table <- reactive({
+    df_shots <- shot_df()
+    
+    #attempts=TRUE, onTarget=TRUE, 
+    #goals=TRUE, xg=TRUE, xg_diff=TRUE,
+    #sort="desc", grp="player.name",
+    #sort_by="actual_goals"
+    
+    ## Set up the variables
+    if("Shot Attempts" %in% input$shotTableCols){
+      attempts = TRUE
+    }
+    else{
+      attempts = FALSE
+    }
+    
+    if("Shots on Target" %in% input$shotTableCols){
+      onTarget = TRUE
+    }
+    else{
+      onTarget = FALSE
+    }
+    
+    if("Actual Goals Scored" %in% input$shotTableCols){
+      goals = TRUE
+    }
+    else{
+      goals = FALSE
+    }
+    
+    if("Xg" %in% input$shotTableCols){
+      xg = TRUE
+    }
+    else{
+      xg = FALSE
+    }
+    
+    if("Xg Difference" %in% input$shotTableCols){
+      xg_diff = TRUE
+    }
+    else{
+      xg_diff = FALSE
+    }
+    
+    if(input$shotTableGroup == "Player"){
+      grp = "player.name"
+    }
+    else{
+      grp = "team.name"
+    }
+    
+    shot_table <- NULL
+    
+    shots_attempted <- df_shots %>% group_by(df_shots[[grp]]) %>% 
+      count(df_shots[[grp]]) %>%
+      summarise(shotAttempts = n)
+    
+    shot_table = shots_attempted
+    
+    names(shot_table)[1] <- input$shotTableGroup
+    
+    shotsOnTarget <- df_shots %>% filter(shot.onTarget=TRUE) %>% 
+      group_by(df_shots[[grp]])%>% 
+      count(df_shots[[grp]])%>%
+      summarise(shotsOnTarget = n)
+    
+    names(shotsOnTarget)[1] <- input$shotTableGroup
+    
+    if(grp=="player.name"){
+      shot_table <- merge(shot_table, shotsOnTarget, 
+                          by="Player",
+                          all.x=TRUE)
+    }
+    else{
+      shot_table <- merge(shot_table, shotsOnTarget, 
+                          by="Team",
+                          all.x=TRUE)
+    }
+    
+    if(grp == "player.name"){
+      actual_goals <- df_shots %>% filter(shot.isGoal==TRUE) %>% 
+        group_by(player.name) %>% 
+        count(player.name) %>% 
+        summarise(actual_goals = n)
+    }
+    else{
+      actual_goals <- df_shots %>% filter(shot.isGoal==TRUE) %>% 
+        group_by(team.name) %>% 
+        count(team.name) %>% 
+        summarise(actual_goals = n)
+    }
+    
+    names(actual_goals)[1] <- input$shotTableGroup
+    
+    if(grp=="player.name"){
+      shot_table <- merge(shot_table, actual_goals, 
+                          by="Player",
+                          all.x=TRUE)
+    }
+    else{
+      shot_table <- merge(shot_table, actual_goals, 
+                          by="Team",
+                          all.x=TRUE)
+    }
+    
+    # maybe don't do the arrange part
+    if(grp=="player.name"){
+      xg_df <- df_shots %>% select(player.name, shot.xg) %>%
+        group_by(player.name) %>% 
+        summarise(xg = sum(shot.xg)) %>% arrange(-xg)
+    }
+    else{
+      xg_df <- df_shots %>% select(team.name, shot.xg) %>%
+        group_by(team.name) %>% 
+        summarise(xg = sum(shot.xg)) %>% arrange(-xg)
+    }
+    
+    names(xg_df)[1] <- input$shotTableGroup
+    
+    if(grp=="player.name"){
+      shot_table <- merge(shot_table, xg_df,
+                          by="Player",
+                          all.x=TRUE)
+    }
+    else{
+      shot_table <- merge(shot_table, xg_df,
+                          by="Team",
+                          all.x=TRUE)
+    }
+    
+    shot_table[is.na(shot_table)] <- 0
+    
+    shot_table <- shot_table %>% mutate(difference = (actual_goals -xg))
+    
+    # attempts, onTarget, goals, xg, xg_diff
+    if(!attempts){
+      shot_table <- shot_table %>% select(-shotAttempts)
+    }
+    
+    if(!onTarget){
+      shot_table <- shot_table %>% select(-shotsOnTarget)
+    }
+    
+    if(!goals){
+      shot_table <- shot_table %>% select(-actual_goals)
+    }
+    
+    if(!xg){
+      shot_table <- shot_table %>% select(-xg)
+    }
+    
+    if(!xg_diff){
+      shot_table <- shot_table %>% select(-difference)
+    }
+    
+    return(shot_table)
+  })
+  
+  output$shotTable <- renderDataTable({
+    if (is.null(my_json())) {
+      return ('No file has been uploaded')
+    } 
+    else {
+      return(generate_shot_table())
+    }
+  })
+  
+    
+    
 }
