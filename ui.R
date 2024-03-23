@@ -88,10 +88,60 @@ navbarPage('Wyscout Event Level Data',
                                 tabPanel("Shot Location Visualization",
                                          sidebarLayout(
                                            sidebarPanel(
-                                             
+                                             selectInput("facet_1",
+                                                         "Select the first Category to group by",
+                                                         choices=c("None",
+                                                                   "Match Period",
+                                                                   "Body Part",
+                                                                   "Shot is Goal",
+                                                                   "Shot on Target",
+                                                                   "Team Name",
+                                                                   "Player Name",
+                                                                   "Goal Zone"),
+                                                         selected="None"
+                                                         ),
+                                             selectInput("facet_2",
+                                                         "Select the second Category to group by",
+                                                         choices=c("None",
+                                                                   "Match Period",
+                                                                   "Body Part",
+                                                                   "Shot is Goal",
+                                                                   "Shot on Target",
+                                                                   "Team Name",
+                                                                   "Player Name",
+                                                                   "Goal Zone"),
+                                                         selected="None"
+                                             ),
+                                             selectInput("shotVizColor",
+                                                         "Select the variable that controls the color",
+                                                         choices=c("None",
+                                                                   "Match Period",
+                                                                   "Body Part",
+                                                                   "Shot is Goal",
+                                                                   "Shot on Target",
+                                                                   "Team Name",
+                                                                   "Player Name",
+                                                                   "Goal Zone"),
+                                                         selected="None"
+                                             ),
+                                             selectInput("shotVizShape",
+                                                         "Select the variable that controls the shape",
+                                                         choices=c("None",
+                                                                   "Match Period",
+                                                                   "Body Part",
+                                                                   "Shot is Goal",
+                                                                   "Shot on Target",
+                                                                   "Team Name",
+                                                                   "Player Name",
+                                                                   "Goal Zone"),
+                                                         selected="None"
+                                             ),
+                                             radioButtons("shotVizGoalCircle",
+                                                          "Should goals be circled?",
+                                                          choices=c("Yes", "No"))
                                            ),
                                            mainPanel(
-                                             
+                                             plotOutput("shotVisualization")
                                            )
                                          )  
                                 )

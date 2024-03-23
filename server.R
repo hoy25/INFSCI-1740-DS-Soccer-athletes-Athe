@@ -561,6 +561,102 @@ function(input, output, session) {
     }
   })
   
+  create_shot_plot <- reactive({
+    df_shots <- shot_df()
+    
+    guide_str <- c("Match Period" = "matchPeriod",
+                   "Body Part" = "shot.bodyPart",
+                   "Shot is Goal" = "shot.isGoal",
+                   "Shot on Target" = "shot.onTarget",
+                   "Team Name" = "team.name",
+                   "Player Name" = "player.name",
+                   "Goal Zone" = "shot.goalZone")
+    
+    # scale the x and y locations
+    dfs <- df_shots %>% mutate(loc.x = convert_x(location.x))
+    dfs <- dfs %>% mutate(loc.y = convert_y(location.y))
+    
+    plt <- dfs %>% ggplot(aes(x=loc.x, y=loc.y))
+    
+    if(input$shotVizColor != "None"){
+      clr_on = TRUE
+      clr = guide_str[input$shotVizColor]
+    }
+    else{
+      clr_on = FALSE
+    }
+    
+    if(input$shotVizShape != "None"){
+      shape_on = TRUE
+      shpe = guide_str[input$shotVizShape]
+    }
+    else{
+      shape_on = FALSE
+    }
+    
+    # do the color and the shape for the points
+    if(clr_on && shape_on){
+      plt <- plt + geom_point(aes(color = dfs[[clr]], 
+                                  shape = dfs[[shpe]])) +
+        guides(color=guide_legend(input$shotVizColor),
+               shape=guide_legend(input$shotVizShape))
+    }
+    else if(clr_on){
+      plt <- plt + geom_point(aes(color=dfs[[clr]])) +
+        guides(color=guide_legend(input$shotVizColor))
+    }
+    else if (shape_on){
+      plt <- plt + geom_point(aes(shape=dfs[[shpe]])) +
+        guides(shape=guide_legend(input$shotVizShape))
+    }
+    else{
+      plt <- plt + geom_point()
+    }
+    
+    # set the boundaries on the plot so it better represents a soccer field
+    plt <- plt + xlim(0, field_length_x) + ylim(0, field_width_y)
+    
+    # account for any necessary facetting
+    
+    
+    
+    if(input$facet_1 != "None" && input$facet_2 != "None"){
+      # facet_grid
+      plt <- plt + facet_grid(as.formula(paste(guide_str[input$facet_1], "~", guide_str[input$facet_2])))
+    }
+    else if(input$facet_1 != "None"){
+      # facet_wrap with facet_1
+      plt <- plt + facet_wrap(as.formula(paste("~", guide_str[input$facet_1])), ncol=1)
+    }
+    else if(input$facet_2 != "None"){
+      # facet_wrap with facet_2
+      plt <- plt + facet_wrap(as.formula(paste("~", guide_str[input$facet_2])), ncol=1)
+    }
+    else{
+      # no facet_wrap
+    }
+    
+    # account for the goal circles
+    if(input$shotVizGoalCircle == "Yes"){
+      plt <- plt + geom_point(data=dfs %>% filter(shot.isGoal),
+                              pch=21, 
+                              size=4, 
+                              colour="purple")
+    }
+    
+    return(plt)
+    
+  })
+  
+  output$shotVisualization <- renderPlot({
+    if (is.null(my_json())) {
+      return ('No file has been uploaded')
+    } 
+    else {
+      return(create_shot_plot())
+    }
+  })
+  
     
     
 }
