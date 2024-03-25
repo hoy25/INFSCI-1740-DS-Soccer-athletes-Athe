@@ -374,289 +374,36 @@ function(input, output, session) {
     }
   })
   
+  ###Scoring Probability Heatmap
   
-  ### Generate Shot Table
-  shot_df <- reactive({
-    games_list <- my_json()
-    games_df <- games_list[[1]] # init the dataframe with the first game
+  shots_data <- reactive({
+    req(my_json()) 
+    shots <- my_json() %>% 
+      bind_rows() %>% 
+      select(location.x, location.y, shot.isGoal) %>% 
+      na.omit() 
     
-    if(number_of_games() > 1){
-      for(i in 2:number_of_games()){
-        games_df <- rbind(games_df, games_list[[i]])
-      }
-    }
-    # now games_df is a dataframe with all of the games that were in the json
-    df_shots <- games_df %>% select(matchPeriod, minute, second, location.x, 
-                                    location.y, shot.bodyPart, shot.isGoal, 
-                                    shot.onTarget, shot.goalZone,shot.xg, 
-                                    player.name, team.name) %>% na.omit()
+    shots <- shots %>% 
+      mutate(x_bin = cut(location.x, breaks = seq(0, 100, by = 6)),
+             y_bin = cut(location.y, breaks = seq(0, 100, by = 6))) %>% 
+      group_by(x_bin, y_bin) %>% 
+      summarise(goals = sum(shot.isGoal, na.rm = TRUE),
+                shots = n(),
+                scoring_prob = goals / shots) %>% 
+      ungroup()
     
-    return(df_shots)
+    shots
   })
   
-  generate_shot_table <- reactive({
-    df_shots <- shot_df()
+  output$shotHeatmap <- renderPlot({
+    req(shots_data())
     
-    #attempts=TRUE, onTarget=TRUE, 
-    #goals=TRUE, xg=TRUE, xg_diff=TRUE,
-    #sort="desc", grp="player.name",
-    #sort_by="actual_goals"
-    
-    ## Set up the variables
-    if("Shot Attempts" %in% input$shotTableCols){
-      attempts = TRUE
-    }
-    else{
-      attempts = FALSE
-    }
-    
-    if("Shots on Target" %in% input$shotTableCols){
-      onTarget = TRUE
-    }
-    else{
-      onTarget = FALSE
-    }
-    
-    if("Actual Goals Scored" %in% input$shotTableCols){
-      goals = TRUE
-    }
-    else{
-      goals = FALSE
-    }
-    
-    if("Xg" %in% input$shotTableCols){
-      xg = TRUE
-    }
-    else{
-      xg = FALSE
-    }
-    
-    if("Xg Difference" %in% input$shotTableCols){
-      xg_diff = TRUE
-    }
-    else{
-      xg_diff = FALSE
-    }
-    
-    if(input$shotTableGroup == "Player"){
-      grp = "player.name"
-    }
-    else{
-      grp = "team.name"
-    }
-    
-    shot_table <- NULL
-    
-    shots_attempted <- df_shots %>% group_by(df_shots[[grp]]) %>% 
-      count(df_shots[[grp]]) %>%
-      summarise(shotAttempts = n)
-    
-    shot_table = shots_attempted
-    
-    names(shot_table)[1] <- input$shotTableGroup
-    
-    shotsOnTarget <- df_shots %>% filter(shot.onTarget=TRUE) %>% 
-      group_by(df_shots[[grp]])%>% 
-      count(df_shots[[grp]])%>%
-      summarise(shotsOnTarget = n)
-    
-    names(shotsOnTarget)[1] <- input$shotTableGroup
-    
-    if(grp=="player.name"){
-      shot_table <- merge(shot_table, shotsOnTarget, 
-                          by="Player",
-                          all.x=TRUE)
-    }
-    else{
-      shot_table <- merge(shot_table, shotsOnTarget, 
-                          by="Team",
-                          all.x=TRUE)
-    }
-    
-    if(grp == "player.name"){
-      actual_goals <- df_shots %>% filter(shot.isGoal==TRUE) %>% 
-        group_by(player.name) %>% 
-        count(player.name) %>% 
-        summarise(actual_goals = n)
-    }
-    else{
-      actual_goals <- df_shots %>% filter(shot.isGoal==TRUE) %>% 
-        group_by(team.name) %>% 
-        count(team.name) %>% 
-        summarise(actual_goals = n)
-    }
-    
-    names(actual_goals)[1] <- input$shotTableGroup
-    
-    if(grp=="player.name"){
-      shot_table <- merge(shot_table, actual_goals, 
-                          by="Player",
-                          all.x=TRUE)
-    }
-    else{
-      shot_table <- merge(shot_table, actual_goals, 
-                          by="Team",
-                          all.x=TRUE)
-    }
-    
-    # maybe don't do the arrange part
-    if(grp=="player.name"){
-      xg_df <- df_shots %>% select(player.name, shot.xg) %>%
-        group_by(player.name) %>% 
-        summarise(xg = sum(shot.xg)) %>% arrange(-xg)
-    }
-    else{
-      xg_df <- df_shots %>% select(team.name, shot.xg) %>%
-        group_by(team.name) %>% 
-        summarise(xg = sum(shot.xg)) %>% arrange(-xg)
-    }
-    
-    names(xg_df)[1] <- input$shotTableGroup
-    
-    if(grp=="player.name"){
-      shot_table <- merge(shot_table, xg_df,
-                          by="Player",
-                          all.x=TRUE)
-    }
-    else{
-      shot_table <- merge(shot_table, xg_df,
-                          by="Team",
-                          all.x=TRUE)
-    }
-    
-    shot_table[is.na(shot_table)] <- 0
-    
-    shot_table <- shot_table %>% mutate(difference = (actual_goals -xg))
-    
-    # attempts, onTarget, goals, xg, xg_diff
-    if(!attempts){
-      shot_table <- shot_table %>% select(-shotAttempts)
-    }
-    
-    if(!onTarget){
-      shot_table <- shot_table %>% select(-shotsOnTarget)
-    }
-    
-    if(!goals){
-      shot_table <- shot_table %>% select(-actual_goals)
-    }
-    
-    if(!xg){
-      shot_table <- shot_table %>% select(-xg)
-    }
-    
-    if(!xg_diff){
-      shot_table <- shot_table %>% select(-difference)
-    }
-    
-    return(shot_table)
+    ggplot(shots_data(), aes(x = x_bin, y = y_bin, fill = scoring_prob)) +
+      geom_tile() + 
+      scale_fill_gradient(low = "blue", high = "red") +
+      labs(fill = "Scoring Probability") +
+      theme_minimal() +
+      ggtitle("Scoring Probability Heatmap")
   })
   
-  output$shotTable <- renderDataTable({
-    if (is.null(my_json())) {
-      return ('No file has been uploaded')
-    } 
-    else {
-      return(generate_shot_table())
-    }
-  })
-  
-  create_shot_plot <- reactive({
-    df_shots <- shot_df()
-    
-    guide_str <- c("Match Period" = "matchPeriod",
-                   "Body Part" = "shot.bodyPart",
-                   "Shot is Goal" = "shot.isGoal",
-                   "Shot on Target" = "shot.onTarget",
-                   "Team Name" = "team.name",
-                   "Player Name" = "player.name",
-                   "Goal Zone" = "shot.goalZone")
-    
-    # scale the x and y locations
-    dfs <- df_shots %>% mutate(loc.x = convert_x(location.x))
-    dfs <- dfs %>% mutate(loc.y = convert_y(location.y))
-    
-    plt <- dfs %>% ggplot(aes(x=loc.x, y=loc.y))
-    
-    if(input$shotVizColor != "None"){
-      clr_on = TRUE
-      clr = guide_str[input$shotVizColor]
-    }
-    else{
-      clr_on = FALSE
-    }
-    
-    if(input$shotVizShape != "None"){
-      shape_on = TRUE
-      shpe = guide_str[input$shotVizShape]
-    }
-    else{
-      shape_on = FALSE
-    }
-    
-    # do the color and the shape for the points
-    if(clr_on && shape_on){
-      plt <- plt + geom_point(aes(color = dfs[[clr]], 
-                                  shape = dfs[[shpe]])) +
-        guides(color=guide_legend(input$shotVizColor),
-               shape=guide_legend(input$shotVizShape))
-    }
-    else if(clr_on){
-      plt <- plt + geom_point(aes(color=dfs[[clr]])) +
-        guides(color=guide_legend(input$shotVizColor))
-    }
-    else if (shape_on){
-      plt <- plt + geom_point(aes(shape=dfs[[shpe]])) +
-        guides(shape=guide_legend(input$shotVizShape))
-    }
-    else{
-      plt <- plt + geom_point()
-    }
-    
-    # set the boundaries on the plot so it better represents a soccer field
-    plt <- plt + xlim(0, field_length_x) + ylim(0, field_width_y)
-    
-    # account for any necessary facetting
-    
-    
-    
-    if(input$facet_1 != "None" && input$facet_2 != "None"){
-      # facet_grid
-      plt <- plt + facet_grid(as.formula(paste(guide_str[input$facet_1], "~", guide_str[input$facet_2])))
-    }
-    else if(input$facet_1 != "None"){
-      # facet_wrap with facet_1
-      plt <- plt + facet_wrap(as.formula(paste("~", guide_str[input$facet_1])), ncol=1)
-    }
-    else if(input$facet_2 != "None"){
-      # facet_wrap with facet_2
-      plt <- plt + facet_wrap(as.formula(paste("~", guide_str[input$facet_2])), ncol=1)
-    }
-    else{
-      # no facet_wrap
-    }
-    
-    # account for the goal circles
-    if(input$shotVizGoalCircle == "Yes"){
-      plt <- plt + geom_point(data=dfs %>% filter(shot.isGoal),
-                              pch=21, 
-                              size=4, 
-                              colour="purple")
-    }
-    
-    return(plt)
-    
-  })
-  
-  output$shotVisualization <- renderPlot({
-    if (is.null(my_json())) {
-      return ('No file has been uploaded')
-    } 
-    else {
-      return(create_shot_plot())
-    }
-  })
-  
-    
-    
 }
