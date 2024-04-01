@@ -29,3 +29,20 @@ The algorithm combines the scoring probabilities of all games in a single datase
 3. **Reactivity**: The heatmap updates reactively to changes in the input data, ensuring that the visualization always reflects the current dataset.
 
 The output of this function is a heatmap visualization that provides insight into which areas of the playing field have higher or lower probabilities of scoring. This information can be crucial for teams and coaches to develop strategies, train players, and analyze opponents' defensive weaknesses.
+
+### Shots (Probably going to remove this and the pass one)
+####  Goal Information (maybe rename to Shot Information Table)
+This page generates a table that summarizes the information regarding shots from the provided data. It can display:
+1. **shotAttempts**: The number of shots attempted
+2. **shotsOnTarget**: The number of shots that were actually on goal
+3. **actualGoals**: The number of goals scored
+4. **xg**: The expected number of goals scored
+5. **difference**: The difference between the expected goals and the actual goals (xg - actual)
+
+The user can decide whether these columns are calculated for each player or each team in the provided data, although a player/team must register at least one shot attempt to be included. 
+
+The checkboxes on the left hand side of the screen give the ussr this control. Any box checked under **Information Categories** will have the corresponding column presented, and the selected option, either “Player” or “Team”, under **Present Information by Player or by Team** will determine the grouping. 
+
+Users can also sort the resulting table by any of the columns by simply clicking on the column name at the top. 
+
+This table is useful because it presents all the information in one location, allowing the user to quickly determine what players/team are shooting the most, scoring the most, who is expected to score the most, who may be over/under performing in terms of scoring, etc. 
