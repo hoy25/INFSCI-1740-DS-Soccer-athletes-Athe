@@ -1,6 +1,6 @@
 navbarPage('Wyscout Event Level Data',
            tabPanel('Welcome!',
-                    includeMarkdown("welcome.md")
+                    includeMarkdown("README.md")
            ),
            tabPanel('Upload JSON',
                     sidebarLayout(
@@ -19,18 +19,6 @@ navbarPage('Wyscout Event Level Data',
                                              plotOutput('num_events_per_game'),
                                              h3("The date and team names for each game is:"),
                                              tableOutput('team_names_per_game')
-                                    ),
-                                    tabPanel('Variable data types',
-                                             h3("Number of variables"),
-                                             verbatimTextOutput('number_of_variables'),
-                                             h3("Number of Variables per data type"),
-                                             plotOutput('number_of_variables_dataType'),
-                                             h3("Number of Variables groups"),
-                                             verbatimTextOutput('number_of_variables_group'),
-                                             h3("Number of Variables per each group"),
-                                             plotOutput('number_of_variables_per_group'),
-                                             h3("Number of Variables per each group by dataType"),
-                                             plotOutput('number_of_variables_per_group_dataType')
                                     )
                         )
                       )
@@ -67,96 +55,92 @@ navbarPage('Wyscout Event Level Data',
                           )
                         )
                   ),
-           tabPanel("Shots",
-                    tabsetPanel(type = 'pills',
-                                tabPanel("Goal Information",
-                                         # attempts, onTarget, goals, xg, xg_diff
-                                         # sort, grp, sort_by
-                                         sidebarLayout(
-                                           sidebarPanel(
-                                             checkboxGroupInput("shotTableCols",
-                                                                "Information Categories",
-                                                                choices=c("Shot Attempts",
-                                                                          "Shots on Target",
-                                                                          "Actual Goals Scored",
-                                                                          "Xg",
-                                                                          "Xg Difference"),
-                                                                selected=c("Shot Attempts",
-                                                                           "Shots on Target",
-                                                                           "Actual Goals Scored",
-                                                                           "Xg",
-                                                                           "Xg Difference")),
-                                             radioButtons("shotTableGroup",
-                                                          "Present Information by Player or by Team",
-                                                          choices=c("Player", "Team"))
-                                           ),
-                                           mainPanel(
-                                             dataTableOutput("shotTable")
-                                           )
-                                         )
-                                         
-                                ),
-                                tabPanel("Shot Location Visualization",
-                                         sidebarLayout(
-                                           sidebarPanel(
-                                             selectInput("facet_1",
-                                                         "Select the first Category to group by",
-                                                         choices=c("None",
-                                                                   "Match Period",
-                                                                   "Body Part",
-                                                                   "Shot is Goal",
-                                                                   "Shot on Target",
-                                                                   "Team Name",
-                                                                   "Player Name",
-                                                                   "Goal Zone"),
-                                                         selected="None"
-                                             ),
-                                             selectInput("facet_2",
-                                                         "Select the second Category to group by",
-                                                         choices=c("None",
-                                                                   "Match Period",
-                                                                   "Body Part",
-                                                                   "Shot is Goal",
-                                                                   "Shot on Target",
-                                                                   "Team Name",
-                                                                   "Player Name",
-                                                                   "Goal Zone"),
-                                                         selected="None"
-                                             ),
-                                             selectInput("shotVizColor",
-                                                         "Select the variable that controls the color",
-                                                         choices=c("None",
-                                                                   "Match Period",
-                                                                   "Body Part",
-                                                                   "Shot is Goal",
-                                                                   "Shot on Target",
-                                                                   "Team Name",
-                                                                   "Player Name",
-                                                                   "Goal Zone"),
-                                                         selected="None"
-                                             ),
-                                             selectInput("shotVizShape",
-                                                         "Select the variable that controls the shape",
-                                                         choices=c("None",
-                                                                   "Match Period",
-                                                                   "Body Part",
-                                                                   "Shot is Goal",
-                                                                   "Shot on Target",
-                                                                   "Team Name",
-                                                                   "Player Name",
-                                                                   "Goal Zone"),
-                                                         selected="None"
-                                             ),
-                                             radioButtons("shotVizGoalCircle",
-                                                          "Should goals be circled?",
-                                                          choices=c("Yes", "No"))
-                                           ),
-                                           mainPanel(
-                                             plotOutput("shotVisualization")
-                                           )
-                                         )  
-                                )
+                  tabPanel("Shot Information Table",
+                    # attempts, onTarget, goals, xg, xg_diff
+                    # sort, grp, sort_by
+                    sidebarLayout(
+                      sidebarPanel(
+                        checkboxGroupInput("shotTableCols",
+                                           "Information Categories",
+                                           choices=c("Shot Attempts",
+                                                     "Shots on Target",
+                                                     "Actual Goals Scored",
+                                                     "Xg",
+                                                     "Xg Difference"),
+                                           selected=c("Shot Attempts",
+                                                      "Shots on Target",
+                                                      "Actual Goals Scored",
+                                                      "Xg",
+                                                      "Xg Difference")),
+                        radioButtons("shotTableGroup",
+                                     "Present Information by Player or by Team",
+                                     choices=c("Player", "Team"))
+                      ),
+                      mainPanel(
+                        dataTableOutput("shotTable")
+                      )
                     )
+                    
+                  ),
+                  tabPanel("Shot Location Visualization",
+                    sidebarLayout(
+                      sidebarPanel(
+                        selectInput("facet_1",
+                                    "Select the first Category to group by",
+                                    choices=c("None",
+                                              "Match Period",
+                                              "Body Part",
+                                              "Shot is Goal",
+                                              "Shot on Target",
+                                              "Team Name",
+                                              "Player Name",
+                                              "Goal Zone"),
+                                    selected="None"
+                        ),
+                        selectInput("facet_2",
+                                    "Select the second Category to group by",
+                                    choices=c("None",
+                                              "Match Period",
+                                              "Body Part",
+                                              "Shot is Goal",
+                                              "Shot on Target",
+                                              "Team Name",
+                                              "Player Name",
+                                              "Goal Zone"),
+                                    selected="None"
+                        ),
+                        selectInput("shotVizColor",
+                                    "Select the variable that controls the color",
+                                    choices=c("None",
+                                              "Match Period",
+                                              "Body Part",
+                                              "Shot is Goal",
+                                              "Shot on Target",
+                                              "Team Name",
+                                              "Player Name",
+                                              "Goal Zone"),
+                                    selected="None"
+                        ),
+                        selectInput("shotVizShape",
+                                    "Select the variable that controls the shape",
+                                    choices=c("None",
+                                              "Match Period",
+                                              "Body Part",
+                                              "Shot is Goal",
+                                              "Shot on Target",
+                                              "Team Name",
+                                              "Player Name",
+                                              "Goal Zone"),
+                                    selected="None"
+                        ),
+                        radioButtons("shotVizGoalCircle",
+                                     "Should goals be circled?",
+                                     choices=c("Yes", "No"))
+                      ),
+                      mainPanel(
+                        plotOutput("shotVisualization")
+                      )
+                    )  
            )
 
 )

@@ -1,7 +1,5 @@
 # Pitt Soccer Analytics App
 
-# We should probably get rid of the Variable data types part of the upload JSON page
-
 Welcome! 
 
 This app is designed to provide insight about collegiate soccer through the use of visual plots and tables that summarize key statistics.
@@ -30,8 +28,7 @@ The algorithm combines the scoring probabilities of all games in a single datase
 
 The output of this function is a heatmap visualization that provides insight into which areas of the playing field have higher or lower probabilities of scoring. This information can be crucial for teams and coaches to develop strategies, train players, and analyze opponents' defensive weaknesses.
 
-### Shots (Probably going to remove this and the pass one)
-####  Goal Information (maybe rename to Shot Information Table)
+###  Shot Information Table
 This page generates a table that summarizes the information regarding shots from the provided data. It can display:
 1. **shotAttempts**: The number of shots attempted
 2. **shotsOnTarget**: The number of shots that were actually on goal
@@ -46,3 +43,37 @@ The checkboxes on the left hand side of the screen give the ussr this control. A
 Users can also sort the resulting table by any of the columns by simply clicking on the column name at the top. 
 
 This table is useful because it presents all the information in one location, allowing the user to quickly determine what players/team are shooting the most, scoring the most, who is expected to score the most, who may be over/under performing in terms of scoring, etc. 
+
+### Shot Location Visualization
+This page generates plots that provide another method for the user to visualize the location of shots. The user has control over the groupings used, as well as the coloring and shapes of the data points. They also have the option to have all of the shots that resulted in goals be circled, for increased clarity.
+
+The user changes the plots using the dropboxes on the lefthand side of the screen.
+1. **Select the first Category to group by**: Indicates what variable should be grouped by first. If both grouping options are selected, this variable will appear
+on the y-axis (vertically)
+2. **Select the second Category to group by**: Indicates what variable should be grouped by second. If both grouping options are selected, this variable will appear
+on the x-axis (horizontally)
+3. **Select the variable that controls the color**: Indicates what variable controls the color of the data points. For example, if "Team" is selected, then all shots taken by Team A will be in one color, while all shots taken by Team B will be in a different color.
+4. **Select the variable that controls the shape**: Indicates what variable controls the shape of the data points. For example, if "Team" is selected, then all shots taken by Team A will be one shape, while all shots taken by Team B will be a different shape.
+
+The Legend for color and shape will appear to the right of the plot(s), once the options in question are selected.
+
+*Note*: If neither grouping option is selected there will only be one plot. Also, it is possible to select "None" for the first group option and pick a real variable
+for the second, in that case the variable selected second, will be treated as though it was selected first.
+
+**Should goals be circled?**: If "Yes" is selected then all shots that resulted in goals will be circled. If "No" is selected then all shots will remain uncircled.
+
+The variable options are as follows for each of the dropboxes:
+1. **None**: This will leave the given dropbox option blank.
+2. **Match Period**: Represents what part of the game the shot took place during. Includes the halves and extra time.
+3. **Body Part**: What part of the body the shot was taken with.
+4. **Shot is Goal**: Indicates whether or not the shot resulted in a goal.
+5. **Shot on Target**: Indicates whether or not the shot was on target.
+6. **Team Name**: The name of the team that took the shot.
+7. **Player Name**: The name of the player that took the shot.
+8. **Goal Zone**: Represents where the shot went on goal.
+
+The following image shows a breakdown for **Goal Zone**:
+
+![Goal Zones](Images/goal-zones.png)
+
+This page provides users with options regarding how to view the data along with ways to break down the data spatially to identify trends and other patterns.
