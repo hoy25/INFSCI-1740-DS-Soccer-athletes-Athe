@@ -27,9 +27,7 @@ The algorithm can show the pass occurances of each half (e.g. `1H` means first h
 This page provides a visualization of different soccer players' passing patterns, with the following functionalities:
 1. **Pass Plots for Individual Players**: Each subplot corresponds to an individual player's passing data during a match. The players are likely identified by the IDs listed in the “Select ID want to see” section.
 2. **Pass Outcomes**: The solid lines represent successful passes, while the dotted lines indicate unsuccessful ones. This feature allows for an analysis of both the quantity and quality of a player's passes.
-
 3. **Player Selection**: Users can select which players' data they wish to view by checking boxes next to the given IDs.
-
 4. **Color-Coded Players**：Each player is assigned a unique color, which is used to plot their passes on the grid. This makes it easier to distinguish between different players on the same plot
 5. **Field Grid**: The x and y axes, labeled “location.x” and “location.y,” represent the football pitch, providing a spatial reference for where passes are made.
 6. **Confirm Button**: After selecting the desired player IDs, the user likely needs to press the “Confirm” button to update the plots according to their selection.
