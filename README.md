@@ -31,8 +31,7 @@ This page generates a table that summarizes the information regarding passes fro
 4. **player**：Player who started the pass.
 5. **recipient**: Player who recieved the pass. 
 
-### Shots
-### Probability Heatmap Function
+#### Probability Heatmap Function
 This function is designed to analyze and visualize scoring probabilities based on shot locations, particularly focusing on shots made during a game. The visualization is in the form of a heatmap that represents different areas of the soccer field.
 
 The algorithm combines the scoring probabilities of all games in a single dataset to ensure the greatest confidence in the probability of scoring at different position of the field.
