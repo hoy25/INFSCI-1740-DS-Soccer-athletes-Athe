@@ -25,7 +25,7 @@ navbarPage('Wyscout Event Level Data',
                     )),
                     tabPanel("Pass Analysis",
                         tabsetPanel(type = 'pills',
-                                    tabPanel("Soccer Passing Network Map",
+                                    tabPanel("Football Passing Network Map",
                                  fluidRow(
                                    column(2,
                                    actionButton("confirmButton", "Confirm"),  
