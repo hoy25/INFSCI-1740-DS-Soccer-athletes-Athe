@@ -17,7 +17,7 @@ With the data uploaded now you can use the other tabs in the top row of the app 
 
 ## Tabs
 
-### Passes
+### Pass Analysis
 #### Probability Heatmap Function
 This function is designed to analyze and visualize where passes start and end in the form of a heatmap that represents different areas of the soccer field. 
 
