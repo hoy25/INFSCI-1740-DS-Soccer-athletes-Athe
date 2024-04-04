@@ -35,7 +35,7 @@ This page provides a visualization of different soccer players' passing patterns
 With these features, the Shiny app enables users to analyze passing strategies and performance of individual players, potentially providing insights into team dynamics and player decision-making on the pitch.
 
 
-#### Probability Heatmap Function
+### Scoring Probability Heatmap
 This function is designed to analyze and visualize scoring probabilities based on shot locations, particularly focusing on shots made during a game. The visualization is in the form of a heatmap that represents different areas of the soccer field.
 
 The algorithm combines the scoring probabilities of all games in a single dataset to ensure the greatest confidence in the probability of scoring at different position of the field.
