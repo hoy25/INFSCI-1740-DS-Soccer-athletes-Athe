@@ -19,7 +19,22 @@ With the data uploaded now you can use the other tabs in the top row of the app 
 
 ## Tabs
 
-### Probability Heatmap Function
+### Passes
+#### Probability Heatmap Function
+This function is designed to analyze and visualize where passes start and end in the form of a heatmap that represents different areas of the soccer field. 
+
+The algorithm can show the pass occurances of each half (e.g. `1H` means first half) games separately, and this plot also can show occurances combination by selecting on the tab.
+
+#### Football Passing Network Map
+This page generates a table that summarizes the information regarding passes from the provided data. It can display:
+1. **passAttempts**:  The total number of passes attempted by players.
+2. **successfulPasses**: The number of passes that successfully reached a teammate.
+3. **failedPasses**: The number of passes that did not reach a teammate or were intercepted by the opposition.
+4. **player**：Player who started the pass.
+5. **recipient**: Player who recieved the pass. 
+
+### Shots
+#### Probability Heatmap Function
 This function is designed to analyze and visualize scoring probabilities based on shot locations, particularly focusing on shots made during a game. The visualization is in the form of a heatmap that represents different areas of the soccer field.
 
 The algorithm combines the scoring probabilities of all games in a single dataset to ensure the greatest confidence in the probability of scoring at different position of the field.
@@ -30,7 +45,6 @@ The algorithm combines the scoring probabilities of all games in a single datase
 
 The output of this function is a heatmap visualization that provides insight into which areas of the playing field have higher or lower probabilities of scoring. This information can be crucial for teams and coaches to develop strategies, train players, and analyze opponents' defensive weaknesses.
 
-### Shots (Probably going to remove this and the pass one)
 ####  Goal Information (maybe rename to Shot Information Table)
 This page generates a table that summarizes the information regarding shots from the provided data. It can display:
 1. **shotAttempts**: The number of shots attempted
@@ -46,3 +60,4 @@ The checkboxes on the left hand side of the screen give the ussr this control. A
 Users can also sort the resulting table by any of the columns by simply clicking on the column name at the top. 
 
 This table is useful because it presents all the information in one location, allowing the user to quickly determine what players/team are shooting the most, scoring the most, who is expected to score the most, who may be over/under performing in terms of scoring, etc. 
+
