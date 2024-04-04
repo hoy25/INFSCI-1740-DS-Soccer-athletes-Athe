@@ -17,6 +17,21 @@ With the data uploaded now you can use the other tabs in the top row of the app 
 
 ## Tabs
 
+### Passes
+#### Probability Heatmap Function
+This function is designed to analyze and visualize where passes start and end in the form of a heatmap that represents different areas of the soccer field. 
+
+The algorithm can show the pass occurances of each half (e.g. `1H` means first half) games separately, and this plot also can show occurances combination by selecting on the tab.
+
+#### Football Passing Network Map
+This page generates a table that summarizes the information regarding passes from the provided data. It can display:
+1. **passAttempts**:  The total number of passes attempted by players.
+2. **successfulPasses**: The number of passes that successfully reached a teammate.
+3. **failedPasses**: The number of passes that did not reach a teammate or were intercepted by the opposition.
+4. **player**：Player who started the pass.
+5. **recipient**: Player who recieved the pass. 
+
+### Shots
 ### Probability Heatmap Function
 This function is designed to analyze and visualize scoring probabilities based on shot locations, particularly focusing on shots made during a game. The visualization is in the form of a heatmap that represents different areas of the soccer field.
 
