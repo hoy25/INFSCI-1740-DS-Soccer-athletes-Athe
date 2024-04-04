@@ -23,9 +23,9 @@ navbarPage('Wyscout Event Level Data',
                         )
                       )
                     )),
-                    tabPanel("pass",
+                    tabPanel("Pass Analysis",
                         tabsetPanel(type = 'pills',
-                                    tabPanel("pass plot 1",
+                                    tabPanel("Soccer Passing Network Map",
                                  fluidRow(
                                    column(2,
                                    actionButton("confirmButton", "Confirm"),  
@@ -34,7 +34,7 @@ navbarPage('Wyscout Event Level Data',
                                                multiple = T)),# choices updated in server,
                                    column(10,
                                    plotOutput("passplot")))),
-                                    tabPanel("hmap plot 2",
+                                    tabPanel("Probability Heatmap Function",
                                     selectInput('list_match_period',
                                                 "Select match_period:", "",multiple = T), # choices updated in server
                                     fluidRow(
