@@ -144,11 +144,17 @@ navbarPage('Wyscout Event Level Data',
                     
            ),
            tabPanel("Duel Analysis",
-                    fluidPage(
-                      fluidRow(
-                        column(12,
-                               plotOutput("duel_analysis_plot")
-                        )
+                    sidebarLayout(
+                      sidebarPanel(
+                        selectInput("duel_type_selector", 
+                                    "Select Duel Type:",
+                                    choices = c("dribble" = "dribble", 
+                                                "defensive_duel" = "defensive_duel",
+                                                "offensive_duel" = "offensive_duel"),
+                                    selected = "dribble")
+                      ),
+                      mainPanel(
+                        plotOutput("duel_split_plot")
                       )
                     )
            ),
