@@ -23,39 +23,39 @@ navbarPage('Wyscout Event Level Data',
                         )
                       )
                     )),
-                    tabPanel("Pass Analysis",
-                        tabsetPanel(type = 'pills',
-                                    tabPanel("Football Passing Network Map",
-                                 fluidRow(
-                                   column(2,
-                                   actionButton("confirmButton", "Confirm"),  
-                                   selectInput('list_vars_one_id',
-                                               "Select ID want to see:", "",
-                                               multiple = T)),# choices updated in server,
-                                   column(10,
-                                   plotOutput("passplot")))),
-                                    tabPanel("Probability Heatmap Function",
-                                    selectInput('list_match_period',
-                                                "Select match_period:", "",multiple = T), # choices updated in server
-                                    fluidRow(
-                                    column(6,p("start"),plotOutput("hmap1")),
-                                    column(6,p("end"),plotOutput("hmap2"))
-                                    )
-                        )
+           tabPanel("Pass Analysis",
+                    tabsetPanel(type = 'pills',
+                                tabPanel("Football Passing Network Map",
+                                         fluidRow(
+                                           column(2,
+                                                  actionButton("confirmButton", "Confirm"),  
+                                                  selectInput('list_vars_one_id',
+                                                              "Select ID want to see:", "",
+                                                              multiple = T)),# choices updated in server,
+                                           column(10,
+                                                  plotOutput("passplot")))),
+                                tabPanel("Probability Heatmap Function",
+                                         selectInput('list_match_period',
+                                                     "Select match_period:", "",multiple = T), # choices updated in server
+                                         fluidRow(
+                                           column(6,p("start"),plotOutput("hmap1")),
+                                           column(6,p("end"),plotOutput("hmap2"))
+                                         )
+                                )
                     )
-                  ),
-                    tabPanel("Scoring Probability Heatmap",
-                      sidebarLayout(
-                        sidebarPanel(
-                            h4("Scoring Probability Heatmap"),
-                            helpText("Visualize the probability of scoring from different field positions.")
-                        ),
-                          mainPanel(
-                            plotOutput("shotHeatmap")
-                          )
-                        )
-                  ),
-                  tabPanel("Shot Information Table",
+           ),
+           tabPanel("Scoring Probability Heatmap",
+                    sidebarLayout(
+                      sidebarPanel(
+                        h4("Scoring Probability Heatmap"),
+                        helpText("Visualize the probability of scoring from different field positions.")
+                      ),
+                      mainPanel(
+                        plotOutput("shotHeatmap")
+                      )
+                    )
+           ),
+           tabPanel("Shot Information Table",
                     # attempts, onTarget, goals, xg, xg_diff
                     # sort, grp, sort_by
                     sidebarLayout(
@@ -81,8 +81,8 @@ navbarPage('Wyscout Event Level Data',
                       )
                     )
                     
-                  ),
-                  tabPanel("Shot Location Visualization",
+           ),
+           tabPanel("Shot Location Visualization",
                     sidebarLayout(
                       sidebarPanel(
                         selectInput("facet_1",
@@ -137,53 +137,48 @@ navbarPage('Wyscout Event Level Data',
                                      "Should goals be circled?",
                                      choices=c("Yes", "No"))
                       ),
-                      tabPanel("Duel Analysis",
-                          fluidPage(
-                            fluidRow(
-                              column(12,
-                                plotOutput("duel_analysis_plot")
-                              )
-                            )
-                          )
-                        ),
-  
-    
-                        tabPanel("Duel Heatmap with Areas",
-                          fluidPage(
-                            fluidRow(
-                              column(12,
-                                plotOutput("duel_heatmap_plot")
-                              )
-                            )
-                          )
-                        ),
-  
-         
-                        tabPanel("Mean Positions",
-                          fluidPage(
-                            fluidRow(
-                              column(12,
-                                plotOutput("position_plot")
-                              )
-                            )
-                          )
-                        )
-                               
                       mainPanel(
                         plotOutput("shotVisualization")
                       )
-                               
                     ) 
+                    
+           ),
+           tabPanel("Duel Analysis",
+                    fluidPage(
+                      fluidRow(
+                        column(12,
+                               plotOutput("duel_analysis_plot")
+                        )
+                      )
+                    )
+           ),
            
+           
+           tabPanel("Duel Heatmap with Areas",
+                    fluidPage(
+                      fluidRow(
+                        column(12,
+                               plotOutput("duel_heatmap_plot")
+                        )
+                      )
+                    )
+           ),
+           
+           
+           tabPanel("Mean Positions",
+                    fluidPage(
+                      fluidRow(
+                        column(12,
+                               plotOutput("position_plot")
+                        )
+                      )
+                    )
+           ),
+           tabPanel("Shot Attempts and Goals",
+                    mainPanel(
+                      plotOutput("shots_goals_plot")  # Placeholder for the plot
+                    )
            )
-           navbarPage('Data',
-
-  # Add a new tabPanel for displaying the shot attempts and goals plot
-  tabPanel("Shot Attempts and Goals",
-    mainPanel(
-      plotOutput("shots_goals_plot")  # Placeholder for the plot
-    )
-  )
+           
 )
 
-)
