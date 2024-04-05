@@ -753,7 +753,7 @@ function(input, output, session) {
   })
   
   
-  output$duel_analysis_plot <- renderPlot({
+  output$duel_split_plot <- renderPlot({
     ggplot(R_duels_data(), aes(x = player.position, y = count, fill = groundDuel.duelType)) + 
       geom_bar(stat = "identity", position = "dodge") +
       geom_text(aes(label = count), position = position_dodge(width = 1), size = 3.5) +
