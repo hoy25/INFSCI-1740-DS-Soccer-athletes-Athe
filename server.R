@@ -690,5 +690,67 @@ function(input, output, session) {
       return(create_shot_plot())
     }
   })
+
+ R_duels_data <- reactive({
+    req(my_json()) 
+    
+    my_json() %>%
+      filter(type.primary == "duel") %>%
+      select(player.position, groundDuel.duelType) %>%
+      na.omit() %>%
+      group_by(player.position, groundDuel.duelType) %>%
+      summarize(count = n())
+  })
+
+
+  R_duels_heatmap <- reactive({
+    req(my_json())
+    
+    my_json() %>%
+      filter(type.primary == "duel") %>%
+      mutate(Area1 = cut(location.x, breaks=seq(0, 100, by=10), include.lowest = TRUE), Area2 = cut(location.y, breaks=seq(0, 100, by=10), include.lowest = TRUE)) %>%
+      group_by(Area1, Area2, groundDuel.duelType) %>%
+      summarize(count = n())
+  })
+
+
+  R_average_positions <- reactive({
+    req(my_json())
+    
+    my_json() %>%
+      select(player.position, location.x, location.y) %>%
+      group_by(player.position) %>%
+      summarize(mean_x = mean(location.x), mean_y = mean(location.y))
+  })
+
+
+  output$duel_analysis_plot <- renderPlot({
+    ggplot(R_duels_data(), aes(x = player.position, y = count, fill = groundDuel.duelType)) + 
+      geom_bar(stat = "identity", position = "dodge") +
+      geom_text(aes(label = count), position = position_dodge(width = 1), size = 3.5) +
+      labs(title = "Types of Duels by Player Position", x = "Player Position", y = "Count", fill = "Type of Ground Duel") +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45)) +
+      scale_fill_brewer(palette = "Set2")
+    
+output$duel_heatmap_plot <- renderPlot({
+    ggplot(R_duels_heatmap(), aes(x = Area1, y = Area2, fill = count)) +
+  geom_tile(color = "white", size = 0.1) + #border
+  scale_fill_gradient(low = "white", high = "black") +
+  labs(title = "Duels on Field Broken by Areas",
+       x = "Length",
+       y = "Width",
+       fill = "Duel Count") +
+  theme_minimal()
+
+output$position_plot <- renderPlot({
+    #plot
+  ggplot(average_positions, aes(x = mean_x, y = mean_y, label = player.position)) +
+    geom_point() + 
+    geom_text(vjust = -1) +
+    scale_x_continuous(limits = c(0, 100), name = "Field Length") + 
+    scale_y_continuous(limits = c(0, 100), name = "Field Width") + 
+    theme_minimal() +
+    labs(title = "Mean locations of each position") 
   
 }
