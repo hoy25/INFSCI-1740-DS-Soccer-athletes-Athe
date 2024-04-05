@@ -753,4 +753,55 @@ output$position_plot <- renderPlot({
     theme_minimal() +
     labs(title = "Mean locations of each position") 
   })
+
+   ## Function to draw football field lines:
+```{r, complex_Sprint_4}
+
+draw_field_lines <- function() {
+  # Create a dataframe for field lines
+  field_lines <- data.frame(
+    x = c(0, 0, 100, 100, 0, 50, 100, 50, 0, 100, 50, 50),
+    y = c(0, 100, 100, 0, 0, 0, 0, 100, 0, 0, 100, 0)
+  )
+  
+  # Draw the field lines
+  field_lines_plot <- geom_path(data = field_lines, aes(x, y), color = "white", size = 1)
+  
+  return(field_lines_plot)
+}
+```
+
+```{r}
+shots_goals_data <- df %>%
+  filter(type.primary %in% c("shot", "goal")) %>%
+  select(id, matchId, matchPeriod, minute, second, matchTimestamp, 
+         videoTimestamp, type.primary, location.x, location.y, 
+         team.name, opponentTeam.name, player.name, shot.isGoal)
+
+# Create a cool plot that resembles a field and have points to display the locations of x and y coordiantes and the shots
+shots_goals_plot <- ggplot(shots_goals_data, aes(x = location.x, y = location.y, color = type.primary)) +
+  draw_field_lines() +
+  geom_point(size = 3, alpha = 0.7) +
+  facet_wrap(~ type.primary) +
+  scale_color_manual(values = c("shot" = "#FF5733", "goal" = "#33FF33")) + # Custom colors
+  labs(title = "Shot Attempts and Goals", x = "X Coordinate", y = "Y Coordinate", color = "Event Type") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 12),
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 8),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "#1f2833"),
+    plot.background = element_rect(fill = "orange"),
+    axis.line = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    strip.background = element_rect(fill = "#4d648d"),
+    strip.text = element_text(size = 10, color = "white")
+  )
+
+shots_goals_plot
+```   
 }
