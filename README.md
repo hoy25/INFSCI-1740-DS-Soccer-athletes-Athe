@@ -90,6 +90,11 @@ The variable options are as follows for each of the dropboxes:
 7. **Player Name**: The name of the player that took the shot.
 8. **Goal Zone**: Represents where the shot went on goal.
 
+The following image shows a breakdown for **Goal Zone**:
+
+![Goal Zones](Images/goal-zones.png)
+
+This page provides users with options regarding how to view the data along with ways to break down the data spatially to identify trends and other patterns.
 
 ### Duel By Position Graph
 
@@ -123,11 +128,3 @@ The general idea behind the Duel Heatmap is to serve as a base to understand gro
 **Plot Generation**: Utilizes ggplot2 and the mean() function with the x and y coordinate and grouped by player position
 
 **Aesthetics and visuals**: Adjusted the text to ensure readability. Did not add size to geom_point() to increase precision.
-
-
-
-The following image shows a breakdown for **Goal Zone**:
-
-![Goal Zones](Images/goal-zones.png)
-
-This page provides users with options regarding how to view the data along with ways to break down the data spatially to identify trends and other patterns.
