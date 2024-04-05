@@ -148,7 +148,7 @@ navbarPage('Wyscout Event Level Data',
                         ),
   
     
-                        tabPanel("Duel Heatmap",
+                        tabPanel("Duel Heatmap with Areas",
                           fluidPage(
                             fluidRow(
                               column(12,
@@ -159,7 +159,7 @@ navbarPage('Wyscout Event Level Data',
                         ),
   
          
-                        tabPanel("Average Positions",
+                        tabPanel("Mean Positions",
                           fluidPage(
                             fluidRow(
                               column(12,
