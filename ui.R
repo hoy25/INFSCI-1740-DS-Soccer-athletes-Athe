@@ -176,4 +176,14 @@ navbarPage('Wyscout Event Level Data',
                     ) 
            
            )
+           navbarPage('Data',
+
+  # Add a new tabPanel for displaying the shot attempts and goals plot
+  tabPanel("Shot Attempts and Goals",
+    mainPanel(
+      plotOutput("shots_goals_plot")  # Placeholder for the plot
+    )
+  )
+)
+
 )
