@@ -754,41 +754,34 @@ output$position_plot <- renderPlot({
     labs(title = "Mean locations of each position") 
   })
 
-   ## Function to draw football field lines:
-
+   # Function to draw football field lines:
 draw_field_lines <- function() {
-  # Create a dataframe for field lines
   field_lines <- data.frame(
     x = c(0, 0, 100, 100, 0, 50, 100, 50, 0, 100, 50, 50),
     y = c(0, 100, 100, 0, 0, 0, 0, 100, 0, 0, 100, 0)
   )
-  
-  ## Function to draw football field lines:
-  draw_field_lines <- function() {
-    # Create a dataframe for field lines
-    field_lines <- data.frame(
-      x = c(0, 0, 100, 100, 0, 50, 100, 50, 0, 100, 50, 50),
-      y = c(0, 100, 100, 0, 0, 0, 0, 100, 0, 0, 100, 0)
-    )
+  field_lines_plot <- geom_path(data = field_lines, aes(x, y), color = "white", size = 1)
+  return(field_lines_plot)
+}
 
-    # Draw the field lines
-    field_lines_plot <- geom_path(data = field_lines, aes(x, y), color = "white", size = 1)
-
-    return(field_lines_plot)
-  }
-
-  shots_goals_data <- df %>%
+## Shots and goals data processing
+shots_goals_data <- reactive({
+  req(df)
+  df %>%
     filter(type.primary %in% c("shot", "goal")) %>%
     select(id, matchId, matchPeriod, minute, second, matchTimestamp, 
            videoTimestamp, type.primary, location.x, location.y, 
            team.name, opponentTeam.name, player.name, shot.isGoal)
+})
 
-  # Create a cool plot that resembles a field and have points to display the locations of x and y coordiantes and the shots
-  shots_goals_plot <- ggplot(shots_goals_data, aes(x = location.x, y = location.y, color = type.primary)) +
+## Shots and goals plot
+output$shots_goals_plot <- renderPlot({
+  req(shots_goals_data())
+  ggplot(shots_goals_data(), aes(x = location.x, y = location.y, color = type.primary)) +
     draw_field_lines() +
     geom_point(size = 3, alpha = 0.7) +
     facet_wrap(~ type.primary) +
-    scale_color_manual(values = c("shot" = "#FF5733", "goal" = "#33FF33")) + # Custom colors
+    scale_color_manual(values = c("shot" = "#FF5733", "goal" = "#33FF33")) +
     labs(title = "Shot Attempts and Goals", x = "X Coordinate", y = "Y Coordinate", color = "Event Type") +
     theme_minimal() +
     theme(
@@ -806,47 +799,82 @@ draw_field_lines <- function() {
       strip.background = element_rect(fill = "#4d648d"),
       strip.text = element_text(size = 10, color = "white")
     )
+})
 
-  shots_goals_plot
+# Reactive for list of match ids
+palyerid <- reactive({
+  req(my_json()) 
+  my_json() %>% bind_rows() %>% pull(player.id) %>% unique()
+})
 
-  # Load necessary libraries and data here...
+# Reactive for list of match periods
+matchPeriod <- reactive({
+  req(my_json()) 
+  my_json() %>% bind_rows() %>% pull(matchPeriod) %>% unique()
+})
 
-# Define the server function
-server <- function(input, output, session) {
-  # Existing server code...
+observe({
+  req(my_json())
+  updateSelectizeInput(session, 'list_vars_one_id',
+                       choices = palyerid(),
+                       selected = palyerid()[1:10])
+}) %>% bindEvent(input$user_file)
 
-  # Generate the shots_goals_plot and render it
-  output$shots_goals_plot <- renderPlot({
-    shots_goals_data <- df %>%
-      filter(type.primary %in% c("shot", "goal")) %>%
-      select(id, matchId, matchPeriod, minute, second, matchTimestamp, 
-             videoTimestamp, type.primary, location.x, location.y, 
-             team.name, opponentTeam.name, player.name, shot.isGoal)
+observe({
+  req(my_json())
+  updateSelectizeInput(session, 'list_match_period',
+                       choices = matchPeriod(),
+                       selected = matchPeriod()[1])
+}) %>% bindEvent(input$user_file)
 
-    # Create a cool plot that resembles a field and have points to display the locations of x and y coordiantes and the shots
-    ggplot(shots_goals_data, aes(x = location.x, y = location.y, color = type.primary)) +
-      draw_field_lines() +
-      geom_point(size = 3, alpha = 0.7) +
-      facet_wrap(~ type.primary) +
-      scale_color_manual(values = c("shot" = "#FF5733", "goal" = "#33FF33")) + # Custom colors
-      labs(title = "Shot Attempts and Goals", x = "X Coordinate", y = "Y Coordinate", color = "Event Type") +
-      theme_minimal() +
-      theme(
-        plot.title = element_text(size = 16, face = "bold"),
-        axis.title = element_text(size = 12),
-        legend.title = element_text(size = 10),
-        legend.text = element_text(size = 8),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "#1f2833"),
-        plot.background = element_rect(fill = "orange"),
-        axis.line = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        strip.background = element_rect(fill = "#4d648d"),
-        strip.text = element_text(size = 10, color = "white")
-      )
-  })
-}
+### Pass plot
+dat <- eventReactive(input$confirmButton,{
+  req(my_json()) 
+  my_json() %>% bind_rows() %>% 
+    filter(player.id %in% input$list_vars_one_id) %>%
+    mutate(time = minute(hms(matchTimestamp)))
+})
+
+output$passplot <- renderPlot({
+  req(dat())
+  d1 <- dat()
+  ggplot(d1, aes(x = location.x, y = location.y,
+                 col = as.factor(player.id))) +
+    geom_point() +
+    geom_point(data = d1, aes(x = pass.endLocation.x, y = pass.endLocation.y,
+                              col = as.factor(pass.recipient.id))) +
+    facet_wrap(~ paste0(player.name, "(", player.id, ")")) +
+    geom_segment(data = d1, aes(x = location.x, y = location.y,
+                                xend = pass.endLocation.x,
+                                yend = pass.endLocation.y,
+                                linetype = pass.accurate), show.legend = FALSE,
+                 col = hsv(v = seq(0, 1, 1 / (nrow(d1) - 1))))
+})
+
+# Reactive for list of match ids
+d1 <- reactive({
+  req(my_json())
+  my_json() %>% bind_rows() %>% 
+    filter(matchPeriod %in% input$list_match_period) %>% 
+    mutate(x1 = cut(location.x, seq(0, 100, by = 10)),
+           y1 = cut(location.y, seq(0, 100, by = 10)),
+           x2 = cut(pass.endLocation.x, seq(0, 100, by = 10)),
+           y2 = cut(pass.endLocation.y, seq(0, 100, by = 10)))
+})
+
+output$hmap1 <- renderPlot({
+  req(d1())
+  d1() %>% count(x1, y1) %>% drop_na() %>% 
+    ggplot(aes(x1, y1, fill = n)) + geom_tile(col = 1) + scale_fill_gradient(
+      low = "white", high = "red")
+})
+
+output$hmap2 <- renderPlot({
+  req(d1())
+  d1() %>% count(x2, y2) %>% drop_na() %>% 
+    ggplot(aes(x2, y2, fill = n)) + geom_tile(col = 1) + scale_fill_gradient(
+      low = "white", high = "red")
+})
+
 
 }
