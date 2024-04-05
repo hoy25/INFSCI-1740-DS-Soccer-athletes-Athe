@@ -104,7 +104,6 @@ This page provides users with options regarding how to view the data along with 
 
 **Aesthetics and Labels:** Used color scheme “Set2” and angled labels to ensure readability, along with changing readability.
 
-**Reactivity:** In progress
 
 Generally, there will naturally be some positions that have more duels than others, defenders, for example. However, this plot will be useful to notice if some positions has more duels than they should have. This can help with planning and analysis of games. 
 
@@ -116,7 +115,6 @@ Generally, there will naturally be some positions that have more duels than othe
 
 **Aesthetic and Visuals**: Uses a scale gradient color scheme with black being the most amount of duels and white being the lease amount
 
-**Reactivity:** In progress
 
 The general idea behind the Duel Heatmap is to serve as a base to understand ground duels. Why are there duels happening in these areas? Why is there one edge of the field having a lot of ground duels? 
 
