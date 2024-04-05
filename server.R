@@ -755,7 +755,6 @@ output$position_plot <- renderPlot({
   })
 
    ## Function to draw football field lines:
-```{r, complex_Sprint_4}
 
 draw_field_lines <- function() {
   # Create a dataframe for field lines
@@ -769,9 +768,7 @@ draw_field_lines <- function() {
   
   return(field_lines_plot)
 }
-```
 
-```{r}
 shots_goals_data <- df %>%
   filter(type.primary %in% c("shot", "goal")) %>%
   select(id, matchId, matchPeriod, minute, second, matchTimestamp, 
@@ -803,5 +800,5 @@ shots_goals_plot <- ggplot(shots_goals_data, aes(x = location.x, y = location.y,
   )
 
 shots_goals_plot
-```   
+   
 }
