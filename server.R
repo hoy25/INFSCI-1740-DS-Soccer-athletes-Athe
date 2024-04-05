@@ -745,7 +745,7 @@ output$duel_heatmap_plot <- renderPlot({
 })
 output$position_plot <- renderPlot({
     #plot
-  ggplot(R_average_positions, aes(x = mean_x, y = mean_y, label = player.position)) +
+  ggplot(R_average_positions(), aes(x = mean_x, y = mean_y, label = player.position)) +
     geom_point() + 
     geom_text(vjust = -1) +
     scale_x_continuous(limits = c(0, 100), name = "Field Length") + 
