@@ -90,6 +90,39 @@ The variable options are as follows for each of the dropboxes:
 7. **Player Name**: The name of the player that took the shot.
 8. **Goal Zone**: Represents where the shot went on goal.
 
+
+### Duel By Position Graph
+
+**Purpose:** This visualization breaks down the different ground duels (offensive, defensive, dribble) by position. 
+
+**Bar Graph Generation:** Utilizes ggplot2 to create the bar graph using the position of the player and the counts. Filtered by duels to and then picked out ground duels to analyze. 
+
+**Aesthetics and Labels:** Used color scheme “Set2” and angled labels to ensure readability, along with changing readability.
+
+**Reactivity:** In progress
+
+
+### Duel Heatmap
+
+**Purpose**: Creates areas based on the amount of duels that occurred in different parts of the field. 
+
+**Heatmap Generation**: Utilizes ggplot and then uses cut() to break the graph up and generates general areas instead of more specific points. 
+
+**Aesthetic and Visuals**: Uses a scale gradient color scheme with black being the most amount of duels and white being the lease amount
+
+**Reactivity:** In progress
+
+
+### Player Position
+
+**Purpose**: Averages the x and y coordinates of the different player positions to see which part of the field they spend most of their time on. Allows coaches to see a general pattern and cross-reference it with the duels map to learn patterns. 
+
+**Plot Generation**: Utilizes ggplot2 and the mean() function with the x and y coordinate and grouped by player position
+
+**Aesthetics and visuals**: Adjusted the text to ensure readability. Did not add size to geom_point() to increase precision.
+
+
+
 The following image shows a breakdown for **Goal Zone**:
 
 ![Goal Zones](Images/goal-zones.png)
