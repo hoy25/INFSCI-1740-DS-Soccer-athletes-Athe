@@ -692,7 +692,7 @@ function(input, output, session) {
   })
   
   R_duels_data <- reactive({
-    req(my_json()) 
+    req(my_json(), input$duel_type_selector)
     
     games_list <- my_json()
     games_df <- games_list[[1]] # init the dataframe with the first game
@@ -703,12 +703,14 @@ function(input, output, session) {
       }
     }
     
+    duel_type <- input$duel_type_selector
+    
     games_df %>%
-      filter(type.primary == "duel") %>%
+      filter(type.primary == "duel", groundDuel.duelType == duel_type) %>%
       select(player.position, groundDuel.duelType) %>%
       na.omit() %>%
       group_by(player.position, groundDuel.duelType) %>%
-      summarize(count = n())
+      summarize(count = n(), .groups = "drop")
   })
   
   
