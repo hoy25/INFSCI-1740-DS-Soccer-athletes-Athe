@@ -101,6 +101,7 @@ The variable options are as follows for each of the dropboxes:
 
 **Reactivity:** In progress
 
+Generally, there will naturally be some positions that have more duels than others, defenders, for example. However, this plot will be useful to notice if some positions has more duels than they should have. This can help with planning and analysis of games. 
 
 ### Duel Heatmap
 
@@ -111,6 +112,8 @@ The variable options are as follows for each of the dropboxes:
 **Aesthetic and Visuals**: Uses a scale gradient color scheme with black being the most amount of duels and white being the lease amount
 
 **Reactivity:** In progress
+
+The general idea behind the Duel Heatmap is to serve as a base to understand ground duels. Why are there duels happening in these areas? Why is there one edge of the field having a lot of ground duels? 
 
 
 ### Player Position
