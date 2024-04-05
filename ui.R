@@ -174,20 +174,11 @@ navbarPage('Wyscout Event Level Data',
                       )
                     )
            ),
-           
-           tabPanel("Shots and Goals",
-                    plotOutput("shots_goals_plot")
-           ),
-           
-           tabPanel("Pass Plot",
-                    plotOutput("passplot")
-           ),
-           
-           tabPanel("Pass Heatmaps",
-                    fluidRow(
-                      column(6, plotOutput("hmap1")),
-                      column(6, plotOutput("hmap2"))
+           tabPanel("Shot Attempts and Goals",
+                    mainPanel(
+                      plotOutput("shots_goals_plot")  # Placeholder for the plot
                     )
            )
+           
 )
 

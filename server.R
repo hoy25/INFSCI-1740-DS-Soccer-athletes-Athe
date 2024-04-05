@@ -35,14 +35,14 @@ function(input, output, session) {
   matchIds <- reactive({
     sapply(my_json(),
            function(one_game) one_game %>% select(matchId) %>% pluck(1, 1)
-           )
+    )
   })
   
   # get team names from all games
   team_names <- reactive({
     sapply(my_json(), 
            function(one_game) one_game %>% select(team.name) %>% unique
-           )
+    )
   })
   
   # reactive for the currently chosen game index
@@ -51,7 +51,7 @@ function(input, output, session) {
     ifelse(str_equal(input$one_game_selector, ''),
            1,
            match(input$one_game_selector, matchIds()) # this is the R match function. Confusing naming...
-           )
+    )
     
   })
   
@@ -74,7 +74,7 @@ function(input, output, session) {
     )
     
   })
-
+  
   # reactive for the currently chosing multiple games in the BAR CHARTS panel
   # this is chosen in Bar Charts -> Counts - Multiple Games, or is 1 by default
   selected_games_index_bar_charts <- reactive({
@@ -96,7 +96,7 @@ function(input, output, session) {
   selected_game_dict_bar_charts <- reactive({
     get_game_dict(selected_game_index_bar_charts(), my_json())
   })
-
+  
   # reactive for currently chosen games in the BAR CHARTS panel
   selected_games_bar_charts <- reactive({
     my_json() %>% bind_rows() %>%
@@ -112,7 +112,7 @@ function(input, output, session) {
     )
     
   })
-
+  
   # reactive for the currently chosen games index in the HISTOGRAMS multiple games panel
   selected_games_histogram_charts <- reactive({
     my_json() %>% bind_rows() %>%
@@ -185,7 +185,7 @@ function(input, output, session) {
     if (is.null(my_json())) {
       return ('No file has been uploaded')
     } else {
-
+      
       # remove duplicates
       unique_teams <- team_names() %>% unlist %>% unique
       return(length(unique_teams))
@@ -297,7 +297,7 @@ function(input, output, session) {
     }
   }) %>% bindEvent(input$user_file)
   
-
+  
   
   ### ---psss mod ---
   
@@ -328,25 +328,25 @@ function(input, output, session) {
     if (is.null(my_json())) {
       return ('No file has been uploaded')
     } else {
-    my_json() %>% bind_rows()%>% 
-      filter(player.id%in%input$list_vars_one_id) %>%
-      mutate(time=minute(hms(matchTimestamp)))
+      my_json() %>% bind_rows()%>% 
+        filter(player.id%in%input$list_vars_one_id) %>%
+        mutate(time=minute(hms(matchTimestamp)))
     }})
   output$passplot <- renderPlot({
     d1=dat()
-      ggplot(d1,aes(x=location.x,y=location.y,
-                    col=as.factor(player.id)))+
-        geom_point()+
-        geom_point(data=d1,aes(x=pass.endLocation.x,y=pass.endLocation.y,
-                               col=as.factor(pass.recipient.id)))+
-        facet_wrap(~paste0(player.name,"(",player.id,")"))+
-        geom_segment(data=d1,aes(x = location.x, y = location.y,
-                                 xend = pass.endLocation.x,
-                                 yend = pass.endLocation.y,
-                                 linetype =pass.accurate),show.legend = F,
-                     col= hsv(v = seq(0, 1, 1/(nrow(d1)-1))))
+    ggplot(d1,aes(x=location.x,y=location.y,
+                  col=as.factor(player.id)))+
+      geom_point()+
+      geom_point(data=d1,aes(x=pass.endLocation.x,y=pass.endLocation.y,
+                             col=as.factor(pass.recipient.id)))+
+      facet_wrap(~paste0(player.name,"(",player.id,")"))+
+      geom_segment(data=d1,aes(x = location.x, y = location.y,
+                               xend = pass.endLocation.x,
+                               yend = pass.endLocation.y,
+                               linetype =pass.accurate),show.legend = F,
+                   col= hsv(v = seq(0, 1, 1/(nrow(d1)-1))))
   })
-
+  
   # reactive for list of match ids
   d1 <- reactive({
     my_json() %>% bind_rows() %>% filter(matchPeriod%in%input$list_match_period) %>% 
@@ -405,7 +405,7 @@ function(input, output, session) {
       theme_minimal() +
       ggtitle("Scoring Probability Heatmap")
   })
-      
+  
   ### Generate Shot Table
   shot_df <- reactive({
     games_list <- my_json()
@@ -690,40 +690,67 @@ function(input, output, session) {
       return(create_shot_plot())
     }
   })
-
- R_duels_data <- reactive({
+  
+  R_duels_data <- reactive({
     req(my_json()) 
     
-    my_json() %>%
+    games_list <- my_json()
+    games_df <- games_list[[1]] # init the dataframe with the first game
+    
+    if(number_of_games() > 1){
+      for(i in 2:number_of_games()){
+        games_df <- rbind(games_df, games_list[[i]])
+      }
+    }
+    
+    games_df %>%
       filter(type.primary == "duel") %>%
       select(player.position, groundDuel.duelType) %>%
       na.omit() %>%
       group_by(player.position, groundDuel.duelType) %>%
       summarize(count = n())
   })
-
-
+  
+  
   R_duels_heatmap <- reactive({
     req(my_json())
     
-    my_json() %>%
+    games_list <- my_json()
+    games_df <- games_list[[1]] # init the dataframe with the first game
+    
+    if(number_of_games() > 1){
+      for(i in 2:number_of_games()){
+        games_df <- rbind(games_df, games_list[[i]])
+      }
+    }
+    
+    games_df %>%
       filter(type.primary == "duel") %>%
       mutate(Area1 = cut(location.x, breaks=seq(0, 100, by=10), include.lowest = TRUE), Area2 = cut(location.y, breaks=seq(0, 100, by=10), include.lowest = TRUE)) %>%
       group_by(Area1, Area2, groundDuel.duelType) %>%
       summarize(count = n())
   })
-
-
+  
+  
   R_average_positions <- reactive({
     req(my_json())
     
-    my_json() %>%
+    games_list <- my_json()
+    games_df <- games_list[[1]] # init the dataframe with the first game
+    
+    if(number_of_games() > 1){
+      for(i in 2:number_of_games()){
+        games_df <- rbind(games_df, games_list[[i]])
+      }
+    }
+    
+    games_df %>%
       select(player.position, location.x, location.y) %>%
       group_by(player.position) %>%
       summarize(mean_x = mean(location.x), mean_y = mean(location.y))
   })
-
-
+  
+  
   output$duel_analysis_plot <- renderPlot({
     ggplot(R_duels_data(), aes(x = player.position, y = count, fill = groundDuel.duelType)) + 
       geom_bar(stat = "identity", position = "dodge") +
@@ -732,149 +759,84 @@ function(input, output, session) {
       theme_minimal() +
       theme(axis.text.x = element_text(angle = 45)) +
       scale_fill_brewer(palette = "Set2")
-    })
-output$duel_heatmap_plot <- renderPlot({
-    ggplot(R_duels_heatmap(), aes(x = Area1, y = Area2, fill = count)) +
-  geom_tile(color = "white", size = 0.1) + #border
-  scale_fill_gradient(low = "white", high = "black") +
-  labs(title = "Duels on Field Broken by Areas",
-       x = "Length",
-       y = "Width",
-       fill = "Duel Count") +
-  theme_minimal()
-})
-output$position_plot <- renderPlot({
-    #plot
-  ggplot(R_average_positions(), aes(x = mean_x, y = mean_y, label = player.position)) +
-    geom_point() + 
-    geom_text(vjust = -1) +
-    scale_x_continuous(limits = c(0, 100), name = "Field Length") + 
-    scale_y_continuous(limits = c(0, 100), name = "Field Width") + 
-    theme_minimal() +
-    labs(title = "Mean locations of each position") 
   })
-
-   # Function to draw football field lines:
-draw_field_lines <- function() {
-  field_lines <- data.frame(
-    x = c(0, 0, 100, 100, 0, 50, 100, 50, 0, 100, 50, 50),
-    y = c(0, 100, 100, 0, 0, 0, 0, 100, 0, 0, 100, 0)
-  )
-  field_lines_plot <- geom_path(data = field_lines, aes(x, y), color = "white", size = 1)
-  return(field_lines_plot)
-}
-
-## Shots and goals data processing
-shots_goals_data <- reactive({
-  req(df)
-  df %>%
-    filter(type.primary %in% c("shot", "goal")) %>%
-    select(id, matchId, matchPeriod, minute, second, matchTimestamp, 
-           videoTimestamp, type.primary, location.x, location.y, 
-           team.name, opponentTeam.name, player.name, shot.isGoal)
-})
-
-## Shots and goals plot
-output$shots_goals_plot <- renderPlot({
-  req(shots_goals_data())
-  ggplot(shots_goals_data(), aes(x = location.x, y = location.y, color = type.primary)) +
-    draw_field_lines() +
-    geom_point(size = 3, alpha = 0.7) +
-    facet_wrap(~ type.primary) +
-    scale_color_manual(values = c("shot" = "#FF5733", "goal" = "#33FF33")) +
-    labs(title = "Shot Attempts and Goals", x = "X Coordinate", y = "Y Coordinate", color = "Event Type") +
-    theme_minimal() +
-    theme(
-      plot.title = element_text(size = 16, face = "bold"),
-      axis.title = element_text(size = 12),
-      legend.title = element_text(size = 10),
-      legend.text = element_text(size = 8),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-      panel.background = element_rect(fill = "#1f2833"),
-      plot.background = element_rect(fill = "orange"),
-      axis.line = element_blank(),
-      axis.text = element_blank(),
-      axis.ticks = element_blank(),
-      strip.background = element_rect(fill = "#4d648d"),
-      strip.text = element_text(size = 10, color = "white")
+  output$duel_heatmap_plot <- renderPlot({
+    ggplot(R_duels_heatmap(), aes(x = Area1, y = Area2, fill = count)) +
+      geom_tile(color = "white", linewidth = 0.1) + #border
+      scale_fill_gradient(low = "white", high = "black") +
+      labs(title = "Duels on Field Broken by Areas",
+           x = "Length",
+           y = "Width",
+           fill = "Duel Count") +
+      theme_minimal()
+  })
+  output$position_plot <- renderPlot({
+    #plot
+    ggplot(R_average_positions(), aes(x = mean_x, y = mean_y, label = player.position)) +
+      geom_point() + 
+      geom_text(vjust = -1) +
+      scale_x_continuous(limits = c(0, 100), name = "Field Length") + 
+      scale_y_continuous(limits = c(0, 100), name = "Field Width") + 
+      theme_minimal() +
+      labs(title = "Mean locations of each position") 
+  })
+  
+  # Function to draw football field lines:
+  draw_field_lines <- function() {
+    field_lines <- data.frame(
+      x = c(0, 0, 100, 100, 0, 50, 100, 50, 0, 100, 50, 50),
+      y = c(0, 100, 100, 0, 0, 0, 0, 100, 0, 0, 100, 0)
     )
-})
-
-# Reactive for list of match ids
-palyerid <- reactive({
-  req(my_json()) 
-  my_json() %>% bind_rows() %>% pull(player.id) %>% unique()
-})
-
-# Reactive for list of match periods
-matchPeriod <- reactive({
-  req(my_json()) 
-  my_json() %>% bind_rows() %>% pull(matchPeriod) %>% unique()
-})
-
-observe({
-  req(my_json())
-  updateSelectizeInput(session, 'list_vars_one_id',
-                       choices = palyerid(),
-                       selected = palyerid()[1:10])
-}) %>% bindEvent(input$user_file)
-
-observe({
-  req(my_json())
-  updateSelectizeInput(session, 'list_match_period',
-                       choices = matchPeriod(),
-                       selected = matchPeriod()[1])
-}) %>% bindEvent(input$user_file)
-
-### Pass plot
-dat <- eventReactive(input$confirmButton,{
-  req(my_json()) 
-  my_json() %>% bind_rows() %>% 
-    filter(player.id %in% input$list_vars_one_id) %>%
-    mutate(time = minute(hms(matchTimestamp)))
-})
-
-output$passplot <- renderPlot({
-  req(dat())
-  d1 <- dat()
-  ggplot(d1, aes(x = location.x, y = location.y,
-                 col = as.factor(player.id))) +
-    geom_point() +
-    geom_point(data = d1, aes(x = pass.endLocation.x, y = pass.endLocation.y,
-                              col = as.factor(pass.recipient.id))) +
-    facet_wrap(~ paste0(player.name, "(", player.id, ")")) +
-    geom_segment(data = d1, aes(x = location.x, y = location.y,
-                                xend = pass.endLocation.x,
-                                yend = pass.endLocation.y,
-                                linetype = pass.accurate), show.legend = FALSE,
-                 col = hsv(v = seq(0, 1, 1 / (nrow(d1) - 1))))
-})
-
-# Reactive for list of match ids
-d1 <- reactive({
-  req(my_json())
-  my_json() %>% bind_rows() %>% 
-    filter(matchPeriod %in% input$list_match_period) %>% 
-    mutate(x1 = cut(location.x, seq(0, 100, by = 10)),
-           y1 = cut(location.y, seq(0, 100, by = 10)),
-           x2 = cut(pass.endLocation.x, seq(0, 100, by = 10)),
-           y2 = cut(pass.endLocation.y, seq(0, 100, by = 10)))
-})
-
-output$hmap1 <- renderPlot({
-  req(d1())
-  d1() %>% count(x1, y1) %>% drop_na() %>% 
-    ggplot(aes(x1, y1, fill = n)) + geom_tile(col = 1) + scale_fill_gradient(
-      low = "white", high = "red")
-})
-
-output$hmap2 <- renderPlot({
-  req(d1())
-  d1() %>% count(x2, y2) %>% drop_na() %>% 
-    ggplot(aes(x2, y2, fill = n)) + geom_tile(col = 1) + scale_fill_gradient(
-      low = "white", high = "red")
-})
-
-
+    field_lines_plot <- geom_path(data = field_lines, aes(x, y), color = "white", linewidth = 1)
+    return(field_lines_plot)
+  }
+  
+  ## Shots and goals data processing
+  shots_goals_data <- reactive({
+    req(my_json())
+    
+    games_list <- my_json()
+    games_df <- games_list[[1]] # init the dataframe with the first game
+    
+    if(number_of_games() > 1){
+      for(i in 2:number_of_games()){
+        games_df <- rbind(games_df, games_list[[i]])
+      }
+    }
+    
+    games_df %>%
+      filter(type.primary %in% c("shot", "goal")) %>%
+      select(id, matchId, matchPeriod, minute, second, matchTimestamp, 
+             videoTimestamp, type.primary, location.x, location.y, 
+             team.name, opponentTeam.name, player.name, shot.isGoal)
+  })
+  
+  ## Shots and goals plot
+  output$shots_goals_plot <- renderPlot({
+    req(shots_goals_data())
+    ggplot(shots_goals_data(), aes(x = location.x, y = location.y, color = shot.isGoal)) +
+      draw_field_lines() +
+      geom_point(size = 3, alpha = 0.7) +
+      facet_wrap(~ shot.isGoal) +
+      scale_color_manual(values = c("FALSE" = "#FF5733", "TRUE" = "#33FF33")) +
+      labs(title = "Shot Attempts and Goals", x = "X Coordinate", y = "Y Coordinate", color = "Event Type") +
+      theme_minimal() +
+      theme(
+        plot.title = element_text(size = 16, face = "bold"),
+        axis.title = element_text(size = 12),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill = "#1f2833"),
+        plot.background = element_rect(fill = "orange"),
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        strip.background = element_rect(fill = "#4d648d"),
+        strip.text = element_text(size = 10, color = "white")
+      )
+  })
+  
+  
 }
