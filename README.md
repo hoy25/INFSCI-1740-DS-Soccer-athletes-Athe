@@ -104,6 +104,8 @@ This page provides users with options regarding how to view the data along with 
 
 **Aesthetics and Labels:** Used color scheme “Set2” and angled labels to ensure readability, along with changing readability.
 
+**Reactivity:** You have the ability to switch between dribble, defensive, and offensive duels to get a more clear picture.
+
 
 Generally, there will naturally be some positions that have more duels than others, defenders, for example. However, this plot will be useful to notice if some positions has more duels than they should have. This can help with planning and analysis of games. 
 
