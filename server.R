@@ -732,7 +732,7 @@ function(input, output, session) {
       theme_minimal() +
       theme(axis.text.x = element_text(angle = 45)) +
       scale_fill_brewer(palette = "Set2")
-    
+    })
 output$duel_heatmap_plot <- renderPlot({
     ggplot(R_duels_heatmap(), aes(x = Area1, y = Area2, fill = count)) +
   geom_tile(color = "white", size = 0.1) + #border
@@ -742,15 +742,15 @@ output$duel_heatmap_plot <- renderPlot({
        y = "Width",
        fill = "Duel Count") +
   theme_minimal()
-
+})
 output$position_plot <- renderPlot({
     #plot
-  ggplot(average_positions, aes(x = mean_x, y = mean_y, label = player.position)) +
+  ggplot(R_average_positions, aes(x = mean_x, y = mean_y, label = player.position)) +
     geom_point() + 
     geom_text(vjust = -1) +
     scale_x_continuous(limits = c(0, 100), name = "Field Length") + 
     scale_y_continuous(limits = c(0, 100), name = "Field Width") + 
     theme_minimal() +
     labs(title = "Mean locations of each position") 
-  
+  })
 }
