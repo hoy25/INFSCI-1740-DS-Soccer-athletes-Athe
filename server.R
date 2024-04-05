@@ -808,7 +808,5 @@ draw_field_lines <- function() {
     )
 
   shots_goals_plot
-
-}
    
 }
