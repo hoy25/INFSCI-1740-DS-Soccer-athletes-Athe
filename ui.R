@@ -140,7 +140,14 @@ navbarPage('Wyscout Event Level Data',
                       mainPanel(
                         plotOutput("shotVisualization")
                       )
-                    )  
+                    ) 
+           
            )
+           tabPanel("Type of Duel Analysis",
+                 fluidPage(
+                 selectInput("duelType", "Select Duel Type:", choices = NULL),
+                 plotOutput("duelPlot")
+               )
+             )
 
 )
