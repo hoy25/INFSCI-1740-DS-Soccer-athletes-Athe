@@ -137,9 +137,42 @@ navbarPage('Wyscout Event Level Data',
                                      "Should goals be circled?",
                                      choices=c("Yes", "No"))
                       ),
+                      tabPanel("Duel Analysis",
+                          fluidPage(
+                            fluidRow(
+                              column(12,
+                                plotOutput("duel_analysis_plot")
+                              )
+                            )
+                          )
+                        ),
+  
+    
+                        tabPanel("Duel Heatmap",
+                          fluidPage(
+                            fluidRow(
+                              column(12,
+                                plotOutput("duel_heatmap_plot")
+                              )
+                            )
+                          )
+                        ),
+  
+         
+                        tabPanel("Average Positions",
+                          fluidPage(
+                            fluidRow(
+                              column(12,
+                                plotOutput("position_plot")
+                              )
+                            )
+                          )
+                        )
+                               
                       mainPanel(
                         plotOutput("shotVisualization")
                       )
+                               
                     ) 
            
            )
