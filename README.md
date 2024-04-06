@@ -128,3 +128,12 @@ The general idea behind the Duel Heatmap is to serve as a base to understand gro
 **Plot Generation**: Utilizes ggplot2 and the mean() function with the x and y coordinate and grouped by player position
 
 **Aesthetics and visuals**: Adjusted the text to ensure readability. Did not add size to geom_point() to increase precision.
+
+### Soccer Field Data Vizulation:
+
+**Purpose**: The point of this plot is to add a unique spin onto the vizualations and their representation. The overall plot, called Shot Attempts and Goals, illustrates the x and y coordinate of the data upon the position of the shot attempts Pitt had against the games they played. This allows for a better understanding of the positioning of where the shots were taken amongst the field view, rather than an x and y axis and a bunch of points scattered.
+
+ **Plot Generation**: Inside of Rstudio, I utilized the tidyverse library to integrate ggplot to create an aethethically pleasing plot of the data. However, to create the numerous shapes and lines of the soccer field, I composed a function in order to do - which I called in the creation of the plot.
+
+
+ **Aesthetics and visuals**: Instead of a boring black and white plot, I decided to boost this appeal by incorperating colors and emphasizing text to make it bolder and bigger - to place signifigance of the important aspects to make it simplifer for the audience to see.
