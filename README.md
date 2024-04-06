@@ -8,8 +8,8 @@ This app is designed to provide insight about collegiate soccer through the use 
 
 ### Uploading Data
 First the app needs data to analyze. To upload data:
-1. Navigate to the tab labelled **Upload JSON** in the top row.
-2. Click on the box labelled **Browse...** on the lefthand side of the page
+1. Navigate to the tab labeled **Upload JSON** in the top row.
+2. Click on the box labeled **Browse...** on the lefthand side of the page
 3. Select the Wayscout Event level data JSON file that contains the game(s) that you would like to analyze.
 4. There should be a blue bar under the **Browse...** button that says "Upload complete", along with information in the "Games in upload" section on the right; If so, that indicates that the data has been successfully uploaded into the app.
 
@@ -38,7 +38,7 @@ With these features, the Shiny app enables users to analyze passing strategies a
 ### Scoring Probability Heatmap
 This function is designed to analyze and visualize scoring probabilities based on shot locations, particularly focusing on shots made during a game. The visualization is in the form of a heatmap that represents different areas of the soccer field.
 
-The algorithm combines the scoring probabilities of all games in a single dataset to ensure the greatest confidence in the probability of scoring at different position of the field.
+The algorithm combines the scoring probabilities of all games in a single dataset to ensure the greatest confidence in the probability of scoring at different positions of the field.
 
 1. **Heatmap Generation**: Utilizes ggplot2 to create a heatmap. Each tile's color intensity represents the scoring probability for that area, with the color gradient ranging from low (blue) to high (red) scoring probabilities.
 2. **Aesthetics and Labels**: The heatmap includes a color scale to indicate scoring probabilities, minimalistic theme styling, and a title.
@@ -129,11 +129,11 @@ The general idea behind the Duel Heatmap is to serve as a base to understand gro
 
 **Aesthetics and visuals**: Adjusted the text to ensure readability. Did not add size to geom_point() to increase precision.
 
-### Soccer Field Data Vizulation:
+### Soccer Field Data Visualization:
 
-**Purpose**: The point of this plot is to add a unique spin onto the vizualations and their representation. The overall plot, called Shot Attempts and Goals, illustrates the x and y coordinate of the data upon the position of the shot attempts Pitt had against the games they played. This allows for a better understanding of the positioning of where the shots were taken amongst the field view, rather than an x and y axis and a bunch of points scattered.
+**Purpose**: The point of this plot is to add a unique spin onto the visualizations and their representation. The overall plot, called Shot Attempts and Goals, illustrates the x and y coordinate of the data upon the position of the shot attempts Pitt had against the games they played. This allows for a better understanding of the positioning of where the shots were taken amongst the field view, rather than an x and y axis and a bunch of points scattered.
 
- **Plot Generation**: Inside of Rstudio, I utilized the tidyverse library to integrate ggplot to create an aethethically pleasing plot of the data. However, to create the numerous shapes and lines of the soccer field, I composed a function in order to do - which I called in the creation of the plot.
+**Plot Generation**: Inside of Rstudio, I utilized the tidyverse library to integrate ggplot to create an aesthetically pleasing plot of the data. However, to create the numerous shapes and lines of the soccer field, I composed a function in order to do - which I called in the creation of the plot.
 
+**Aesthetics and visuals**: Instead of a boring black and white plot, I decided to boost this appeal by incorporating colors and emphasizing text to make it bolder and bigger - to place significance of the important aspects to make it simpler for the audience to see.
 
- **Aesthetics and visuals**: Instead of a boring black and white plot, I decided to boost this appeal by incorperating colors and emphasizing text to make it bolder and bigger - to place signifigance of the important aspects to make it simplifer for the audience to see.
