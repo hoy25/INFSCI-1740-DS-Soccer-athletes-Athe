@@ -182,9 +182,10 @@ navbarPage('Wyscout Event Level Data',
            ),
            tabPanel("Shot Attempts and Goals",
                     mainPanel(
-                      plotOutput("shots_goals_plot")  # Placeholder for the plot
+                      plotlyOutput("shots_goals_plot")  # Placeholder for the plot
                     )
            )
+           
            
 )
 
