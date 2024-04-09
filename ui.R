@@ -1,3 +1,9 @@
+# Install and load plotly package
+if (!requireNamespace("plotly", quietly = TRUE)) {
+  install.packages("plotly")
+}
+library(plotly)
+
 navbarPage('Wyscout Event Level Data',
            tabPanel('Welcome!',
                     includeMarkdown("README.md")
