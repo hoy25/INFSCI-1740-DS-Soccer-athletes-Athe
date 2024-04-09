@@ -784,6 +784,13 @@ function(input, output, session) {
   })
   
   
+  # Install and load plotly package
+  if (!requireNamespace("plotly", quietly = TRUE)) {
+    install.packages("plotly")
+  }
+  library(plotly)
+  
+  
   # Function to draw football field lines:
   draw_field_lines <- function() {
     field_lines <- data.frame(
