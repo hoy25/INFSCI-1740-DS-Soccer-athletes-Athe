@@ -783,62 +783,66 @@ function(input, output, session) {
       labs(title = "Mean locations of each position") 
   })
   
-  # Function to draw football field lines:
-  draw_field_lines <- function() {
-    field_lines <- data.frame(
-      x = c(0, 0, 100, 100, 0, 50, 100, 50, 0, 100, 50, 50),
-      y = c(0, 100, 100, 0, 0, 0, 0, 100, 0, 0, 100, 0)
-    )
-    field_lines_plot <- geom_path(data = field_lines, aes(x, y), color = "white", linewidth = 1)
-    return(field_lines_plot)
+  # Load required packages
+library(plotly)
+
+# Function to draw football field lines:
+draw_field_lines <- function() {
+  field_lines <- data.frame(
+    x = c(0, 0, 100, 100, 0, 50, 100, 50, 0, 100, 50, 50),
+    y = c(0, 100, 100, 0, 0, 0, 0, 100, 0, 0, 100, 0)
+  )
+  field_lines_plot <- geom_path(data = field_lines, aes(x, y), color = "white", linewidth = 1)
+  return(field_lines_plot)
+}
+
+## Shots and goals data processing
+shots_goals_data <- reactive({
+  req(my_json())
+  
+  games_list <- my_json()
+  games_df <- games_list[[1]] # init the dataframe with the first game
+  
+  if(number_of_games() > 1){
+    for(i in 2:number_of_games()){
+      games_df <- rbind(games_df, games_list[[i]])
+    }
   }
   
-  ## Shots and goals data processing
-  shots_goals_data <- reactive({
-    req(my_json())
-    
-    games_list <- my_json()
-    games_df <- games_list[[1]] # init the dataframe with the first game
-    
-    if(number_of_games() > 1){
-      for(i in 2:number_of_games()){
-        games_df <- rbind(games_df, games_list[[i]])
-      }
-    }
-    
-    games_df %>%
-      filter(type.primary %in% c("shot", "goal")) %>%
-      select(id, matchId, matchPeriod, minute, second, matchTimestamp, 
-             videoTimestamp, type.primary, location.x, location.y, 
-             team.name, opponentTeam.name, player.name, shot.isGoal)
-  })
+  games_df %>%
+    filter(type.primary %in% c("shot", "goal")) %>%
+    select(id, matchId, matchPeriod, minute, second, matchTimestamp, 
+           videoTimestamp, type.primary, location.x, location.y, 
+           team.name, opponentTeam.name, player.name, shot.isGoal)
+})
+
+## Shots and goals plot
+output$shots_goals_plot <- renderPlotly({
+  req(shots_goals_data())
+  p <- ggplot(shots_goals_data(), aes(x = location.x, y = location.y, color = shot.isGoal)) +
+    draw_field_lines() +
+    geom_point(size = 3, alpha = 0.7) +
+    facet_wrap(~ shot.isGoal) +
+    scale_color_manual(values = c("FALSE" = "#FF5733", "TRUE" = "#33FF33")) +
+    labs(title = "Shot Attempts and Goals", x = "X Coordinate", y = "Y Coordinate", color = "Event Type") +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 16, face = "bold"),
+      axis.title = element_text(size = 12),
+      legend.title = element_text(size = 10),
+      legend.text = element_text(size = 8),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.background = element_rect(fill = "#1f2833"),
+      plot.background = element_rect(fill = "orange"),
+      axis.line = element_blank(),
+      axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      strip.background = element_rect(fill = "#4d648d"),
+      strip.text = element_text(size = 10, color = "white")
+    )
   
-  ## Shots and goals plot
-  output$shots_goals_plot <- renderPlot({
-    req(shots_goals_data())
-    ggplot(shots_goals_data(), aes(x = location.x, y = location.y, color = shot.isGoal)) +
-      draw_field_lines() +
-      geom_point(size = 3, alpha = 0.7) +
-      facet_wrap(~ shot.isGoal) +
-      scale_color_manual(values = c("FALSE" = "#FF5733", "TRUE" = "#33FF33")) +
-      labs(title = "Shot Attempts and Goals", x = "X Coordinate", y = "Y Coordinate", color = "Event Type") +
-      theme_minimal() +
-      theme(
-        plot.title = element_text(size = 16, face = "bold"),
-        axis.title = element_text(size = 12),
-        legend.title = element_text(size = 10),
-        legend.text = element_text(size = 8),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_rect(fill = "#1f2833"),
-        plot.background = element_rect(fill = "orange"),
-        axis.line = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        strip.background = element_rect(fill = "#4d648d"),
-        strip.text = element_text(size = 10, color = "white")
-      )
-  })
-  
-  
+  ggplotly(p, tooltip = "text")  # Convert to plotly and enable hover tooltip
+})
+
 }
