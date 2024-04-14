@@ -1,3 +1,4 @@
+
 # Install and load plotly package
 if (!requireNamespace("plotly", quietly = TRUE)) {
   install.packages("plotly")
@@ -31,7 +32,7 @@ navbarPage('Wyscout Event Level Data',
                     )),
            tabPanel("Pass Analysis",
                     tabsetPanel(type = 'pills',
-                                tabPanel("Football Passing Network Map",
+                                tabPanel("Soccer Passing Network Map",
                                          fluidRow(
                                            column(2,
                                                   actionButton("confirmButton", "Confirm"),  
